@@ -1,51 +1,57 @@
-# AI CV Recruitment
+# AI CV Recruitment — Week 1
 
-Đồ án 9 tuần: xây dựng hệ thống AI hỗ trợ tạo lập hồ sơ ứng viên và tự động đánh giá mức độ phù hợp với vị trí tuyển dụng.
+Đồ án 9 tuần: hệ thống AI hỗ trợ tạo lập hồ sơ ứng viên, tự động tìm kiếm và đánh giá mức độ phù hợp với vị trí tuyển dụng.
 
-## Công nghệ
+## Luồng đã chốt
 
-- Backend: Python, FastAPI.
-- Giao diện: HTML, CSS, JavaScript.
-- Cơ sở dữ liệu: MySQL.
-- Dự kiến tích hợp: Google Gemini API, Pandas, web scraping, xuất PDF/DOCX.
+Đăng ký/đăng nhập → nhập hồ sơ và mong muốn công việc → AI hỗ trợ tạo CV → tự tìm tin từ các nguồn cấu hình sẵn → đối chiếu yêu cầu → xếp hạng công việc. Kết quả gồm link tin gốc, mức độ phù hợp, điểm đáp ứng, điểm thiếu/chưa rõ và gợi ý cải thiện.
 
-## Trạng thái hiện tại
+Chức năng nền: đăng xuất, quản lý/chỉnh sửa hồ sơ, xuất PDF/DOCX, lưu lịch sử. Người dùng không phải nhập link hay mô tả công việc.
 
-Đã có giao diện khởi đầu, API kiểm tra hoạt động và cấu hình kết nối MySQL. Chưa có chức năng tạo CV, đánh giá ứng viên, gọi Gemini, thu thập dữ liệu hoặc xuất tài liệu. API health chỉ kiểm tra ứng dụng, không kiểm tra kết nối MySQL/Gemini.
+## Bản tuần 1 có gì?
+
+- Giao diện nhập hồ sơ và xem kết quả giả lập, có nhãn minh họa.
+- API /api/health và /api/demo/recommendations.
+- Thiết kế yêu cầu, kiến trúc, use case tại [docs/week-1.md](docs/week-1.md).
+- Thiết kế SQL tại [database/schema.sql](database/schema.sql).
+- FastAPI, cấu hình MySQL/Gemini và lệnh khởi động ngắn.
+
+Thông tin nhập trong demo không được gửi/lưu. Điểm cố định, công việc hư cấu, không có link tin thật. Chưa có đăng nhập thật, tạo CV, kết nối tuyển dụng, gọi Gemini hoặc xuất tài liệu. Health chỉ kiểm tra ứng dụng, không kiểm tra MySQL/Gemini.
 
 ## Chạy trên Windows
 
-Yêu cầu Python 3.11 trở lên. Mở terminal trong thư mục repo:
+Yêu cầu Python 3.11+. Lần đầu, trong thư mục repo:
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 Copy-Item .env.example .env
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload
 ```
 
-Mở http://127.0.0.1:8000 để xem giao diện hoặc http://127.0.0.1:8000/docs để xem API. Bộ khung có thể khởi động khi chưa cài MySQL và chưa có khóa Gemini.
+Nếu đã cài trên máy thì chỉ cần:
 
-## Cấu hình MySQL và Gemini
-
-Khi triển khai chức năng lưu hồ sơ, cài MySQL và tạo database:
-
-```sql
-CREATE DATABASE ai_cv_recruitment CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```powershell
+.\run.bat
 ```
 
-Điền DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD và GEMINI_API_KEY trong `.env`. Dự án chưa có bảng dữ liệu hoặc migration; module `app/database.py` chuẩn bị kết nối và session cho bước phát triển tiếp theo.
+Mở http://127.0.0.1:8000 và http://127.0.0.1:8000/docs. Dừng bằng Ctrl+C. Nếu cổng bận: `.\run.bat --port 8001`, rồi mở http://127.0.0.1:8001.
 
-Không đưa `.env`, khóa API, mật khẩu hoặc hồ sơ ứng viên thật lên GitHub. `.env.example` chỉ chứa cấu hình mẫu không có thông tin bí mật.
+Bản tuần 1 chạy được khi chưa có MySQL hoặc khóa Gemini. Khi phát triển lưu dữ liệu, điền cấu hình DB trong .env và áp dụng schema.sql vào database phát triển mới. Script này là thiết kế khởi tạo, chưa phải migration và không được ứng dụng tự chạy. Chưa kiểm tra schema trên MySQL thật.
 
-## Lộ trình dự kiến
+Không commit .env, mật khẩu, khóa API hoặc hồ sơ thật.
 
-1. Tuần 1: chốt yêu cầu, use case và mô hình dữ liệu.
-2. Tuần 2: quản lý thông tin ứng viên.
-3. Tuần 3: quản lý vị trí tuyển dụng và mô tả công việc.
-4. Tuần 4: hỗ trợ tạo nội dung CV bằng Gemini.
-5. Tuần 5: đối chiếu hồ sơ với yêu cầu tuyển dụng, giải thích kết quả.
-6. Tuần 6: xuất PDF/DOCX.
-7. Tuần 7: tích hợp xử lý và thu thập dữ liệu theo phạm vi đã chốt.
-8. Tuần 8: kiểm thử và hoàn thiện giao diện.
-9. Tuần 9: hoàn thiện báo cáo, demo và chuẩn bị bảo vệ.
+## Công nghệ
+
+Python/FastAPI; HTML/CSS/JavaScript; MySQL; dự kiến Gemini API, Pandas, web scraping và xuất PDF/DOCX. TopCV là nguồn dự kiến, chưa kết nối; nguồn thực tế phải được xác minh khả năng truy cập dữ liệu trước khi tích hợp.
+
+## Kế hoạch 9 tuần
+
+1. Tuần 1: chốt yêu cầu, use case, dữ liệu, kiến trúc và giao diện minh họa.
+2. Tuần 2: đăng ký/đăng nhập/đăng xuất, quyền truy cập và lưu hồ sơ MySQL.
+3. Tuần 3: tích hợp Gemini để hỗ trợ tạo/chỉnh sửa CV, lưu phiên bản.
+4. Tuần 4: khảo sát và tích hợp nguồn tuyển dụng, tìm tin từ hồ sơ.
+5. Tuần 5: chuẩn hóa, loại trùng, worker và xử lý lỗi nguồn.
+6. Tuần 6: đối chiếu, tính điểm có bằng chứng, xếp hạng và lịch sử.
+7. Tuần 7: xuất PDF/DOCX và hoàn thiện luồng tự động.
+8. Tuần 8: kiểm thử tích hợp, đánh giá chất lượng và hoàn thiện giao diện.
+9. Tuần 9: báo cáo, demo và chuẩn bị bảo vệ.

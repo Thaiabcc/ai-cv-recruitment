@@ -13,3 +13,15 @@ h3 { margin-top: 0; }
 footer { margin-top: 36px; }
 a { color: #166b51; }
 @media (max-width: 720px) { .features { grid-template-columns: 1fr; } main { padding-top: 40px; } }
+.notice { padding: 16px 20px; border-left: 4px solid #aa7d27; background: #fff4d8; border-radius: 8px; }
+.flow { display: flex; flex-wrap: wrap; gap: 12px 36px; padding-left: 24px; line-height: 2; }
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+label { display: grid; gap: 8px; font-weight: 600; }
+input, textarea { width: 100%; padding: 12px; border: 1px solid #b8cbbf; border-radius: 8px; font: inherit; background: white; }
+textarea { min-height: 100px; resize: vertical; }
+button { padding: 14px 24px; margin-top: 24px; border: 0; border-radius: 8px; background: #166b51; color: white; font: inherit; cursor: pointer; }
+button:disabled { opacity: .6; cursor: wait; }
+:focus-visible { outline: 3px solid #aa7d27; outline-offset: 3px; }
+article h3 { margin-top: 16px; }
+article span { color: #166b51; font-weight: 700; }
+@media (max-width: 720px) { .fields { grid-template-columns: 1fr; } }
