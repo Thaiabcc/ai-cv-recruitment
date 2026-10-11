@@ -142,17 +142,19 @@ File `.env`, mật khẩu, khóa API và hồ sơ ứng viên thực tế không
 
 ## 8. Kế hoạch thực hiện
 
-| Tuần | Nội dung |
-| :---: | :--- |
-| 1 | Phân tích yêu cầu, thiết kế dữ liệu, kiến trúc và nguyên mẫu giao diện |
-| 2 | Xác thực tài khoản, kiểm soát quyền truy cập và lưu hồ sơ MySQL |
-| 3 | Tích hợp Gemini hỗ trợ tạo và chỉnh sửa CV, lưu phiên bản |
-| 4 | Khảo sát và tích hợp nguồn tuyển dụng, tìm tin theo hồ sơ |
-| 5 | Chuẩn hóa dữ liệu, loại trùng và xử lý tác vụ nền, lỗi nguồn |
-| 6 | Đối chiếu yêu cầu, đánh giá, giải thích, xếp hạng và lịch sử |
-| 7 | Xuất PDF/DOCX và hoàn thiện quy trình tự động |
-| 8 | Kiểm thử tích hợp, đánh giá chất lượng và hoàn thiện giao diện |
-| 9 | Hoàn thiện báo cáo, demo và chuẩn bị bảo vệ |
+| Kế hoạch | Thực hiện |
+| :--- | :--- |
+| **Tuần 1:** Phân tích yêu cầu, thiết kế dữ liệu, kiến trúc và nguyên mẫu giao diện | Đã xác định phạm vi và luồng nghiệp vụ; lập tài liệu phân tích, kiến trúc và thiết kế SQL; khởi tạo FastAPI; xây dựng và kiểm tra giao diện nhập hồ sơ, hiển thị kết quả minh họa; bàn giao mã nguồn với tag `week-1`. |
+| **Tuần 2:** Xác thực tài khoản, kiểm soát quyền truy cập và lưu hồ sơ MySQL | |
+| **Tuần 3:** Tích hợp Gemini hỗ trợ tạo và chỉnh sửa CV, lưu phiên bản | |
+| **Tuần 4:** Khảo sát và tích hợp nguồn tuyển dụng, tìm tin theo hồ sơ | |
+| **Tuần 5:** Chuẩn hóa dữ liệu, loại trùng và xử lý tác vụ nền, lỗi nguồn | |
+| **Tuần 6:** Đối chiếu yêu cầu, đánh giá, giải thích, xếp hạng và lịch sử | |
+| **Tuần 7:** Xuất PDF/DOCX và hoàn thiện quy trình tự động | |
+| **Tuần 8:** Kiểm thử tích hợp, đánh giá chất lượng và hoàn thiện giao diện | |
+| **Tuần 9:** Hoàn thiện báo cáo, demo và chuẩn bị bảo vệ | |
+
+Cột **Thực hiện** được cập nhật theo kết quả thực tế của từng tuần; các tuần chưa thực hiện được để trống.
 
 ## 9. Tài liệu và phiên bản
 
