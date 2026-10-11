@@ -2,7 +2,7 @@
 
 ### Hệ thống AI hỗ trợ tạo lập hồ sơ ứng viên, tự động tìm kiếm và đánh giá mức độ phù hợp với vị trí tuyển dụng
 
-Repository mã nguồn và tài liệu thiết kế phục vụ đồ án tốt nghiệp, được phát triển theo kế hoạch **9 tuần**.
+Repository mã nguồn và tài liệu thiết kế phục vụ đồ án tốt nghiệp, được phát triển theo kế hoạch **8 tuần**.
 
 **Giai đoạn hiện tại:** Tuần 1 — Phân tích yêu cầu, thiết kế hệ thống và xây dựng nguyên mẫu giao diện.
 
@@ -145,14 +145,13 @@ File `.env`, mật khẩu, khóa API và hồ sơ ứng viên thực tế không
 | Kế hoạch | Thực hiện |
 | :--- | :--- |
 | **Tuần 1:** Phân tích yêu cầu, thiết kế dữ liệu, kiến trúc và nguyên mẫu giao diện | Đã xác định phạm vi và luồng nghiệp vụ; lập tài liệu phân tích, kiến trúc và thiết kế SQL; khởi tạo FastAPI; xây dựng và kiểm tra giao diện nhập hồ sơ, hiển thị kết quả minh họa; bàn giao mã nguồn với tag `week-1`. |
-| **Tuần 2:** Xác thực tài khoản, kiểm soát quyền truy cập và lưu hồ sơ MySQL | |
-| **Tuần 3:** Tích hợp Gemini hỗ trợ tạo và chỉnh sửa CV, lưu phiên bản | |
-| **Tuần 4:** Khảo sát và tích hợp nguồn tuyển dụng, tìm tin theo hồ sơ | |
-| **Tuần 5:** Chuẩn hóa dữ liệu, loại trùng và xử lý tác vụ nền, lỗi nguồn | |
-| **Tuần 6:** Đối chiếu yêu cầu, đánh giá, giải thích, xếp hạng và lịch sử | |
-| **Tuần 7:** Xuất PDF/DOCX và hoàn thiện quy trình tự động | |
-| **Tuần 8:** Kiểm thử tích hợp, đánh giá chất lượng và hoàn thiện giao diện | |
-| **Tuần 9:** Hoàn thiện báo cáo, demo và chuẩn bị bảo vệ | |
+| **Tuần 2:** Xây dựng đăng ký, đăng nhập, đăng xuất; kiểm soát quyền truy cập; quản lý và lưu hồ sơ ứng viên trong MySQL | |
+| **Tuần 3:** Tích hợp Gemini hỗ trợ tạo, chỉnh sửa và lưu phiên bản CV; xuất CV dưới định dạng PDF/DOCX | |
+| **Tuần 4:** Khảo sát và tích hợp nguồn tuyển dụng; tự động tìm tin theo hồ sơ; thu thập, chuẩn hóa, loại trùng dữ liệu và xử lý tác vụ nền, lỗi nguồn | |
+| **Tuần 5:** Hoàn thiện đối chiếu hồ sơ, đánh giá và giải thích mức độ phù hợp; xếp hạng công việc, gợi ý cải thiện và lưu lịch sử; tích hợp giao diện và hoàn thành toàn bộ chức năng của hệ thống | |
+| **Tuần 6:** Kiểm thử chức năng và tích hợp; đánh giá chất lượng kết quả; sửa lỗi, tối ưu hiệu năng và giao diện | |
+| **Tuần 7:** Hoàn thiện báo cáo đồ án và poster | |
+| **Tuần 8:** Kiểm tra đạo văn, chỉnh sửa; chuẩn bị slide và demo bảo vệ | |
 
 Cột **Thực hiện** được cập nhật theo kết quả thực tế của từng tuần; các tuần chưa thực hiện được để trống.
 
