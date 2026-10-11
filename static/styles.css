@@ -1,0 +1,15 @@
+:root { font-family: "Segoe UI", sans-serif; color: #17352d; background: #f3f6f3; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 1080px; margin: auto; padding: 72px 24px; }
+.badge { font-size: 12px; letter-spacing: 2px; font-weight: 700; color: #497568; }
+h1 { font-size: clamp(36px, 7vw, 64px); letter-spacing: -2px; margin: 20px 0; }
+.intro { max-width: 680px; font-size: 21px; line-height: 1.6; }
+section { margin-top: 48px; }
+p { line-height: 1.7; }
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 24px; }
+article { padding: 24px; background: white; border: 1px solid #dce6df; border-radius: 16px; }
+h3 { margin-top: 0; }
+footer { margin-top: 36px; }
+a { color: #166b51; }
+@media (max-width: 720px) { .features { grid-template-columns: 1fr; } main { padding-top: 40px; } }

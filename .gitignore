@@ -218,3 +218,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local secrets and generated candidate documents
+.env
+.env.*
+!.env.example
+uploads/
+exports/
