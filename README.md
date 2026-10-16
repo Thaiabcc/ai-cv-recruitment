@@ -1,118 +1,21 @@
 # AI CV Recruitment
 
-### Hệ thống AI hỗ trợ tạo lập hồ sơ ứng viên, tự động tìm kiếm và đánh giá mức độ phù hợp với vị trí tuyển dụng
+Hệ thống AI hỗ trợ tạo hồ sơ ứng viên, tìm kiếm và đánh giá mức độ phù hợp với vị trí tuyển dụng. Đồ án triển khai theo kế hoạch 8 tuần.
 
-Repository mã nguồn và tài liệu thiết kế phục vụ đồ án tốt nghiệp, được phát triển theo kế hoạch **8 tuần**.
+**Giai đoạn hiện tại: Tuần 2 — Tài khoản và hồ sơ ứng viên lưu trên MySQL.**
 
-**Giai đoạn hiện tại:** Tuần 1 — Phân tích yêu cầu, thiết kế hệ thống và xây dựng nguyên mẫu giao diện.
+## Đã triển khai
 
-[ Tài liệu phân tích và thiết kế ](docs/week-1.md) · [ Thiết kế cơ sở dữ liệu ](database/schema.sql) · [ Mốc bàn giao tuần 1 ](https://github.com/Thaiabcc/ai-cv-recruitment/tree/week-1)
+- Tuần 1: phân tích yêu cầu, kiến trúc, thiết kế database, khung FastAPI và giao diện minh họa.
+- Tuần 2: đăng ký, đăng nhập, đăng xuất; băm mật khẩu Argon2; phiên đăng nhập trong database; nhập, xem, chỉnh sửa và lưu hồ sơ cá nhân.
+- Hồ sơ gồm họ tên, điện thoại, địa chỉ, học vấn, kỹ năng, kinh nghiệm, dự án và nguyện vọng nghề nghiệp.
+- Mỗi tài khoản chỉ truy cập hồ sơ của chính mình; tải lại trang hoặc đăng nhập lại vẫn đọc được dữ liệu đã lưu.
 
-## 1. Giới thiệu đề tài
+AI tạo CV, xuất tài liệu, thu thập tin thật, chấm điểm phù hợp và lịch sử tìm việc **chưa triển khai**. Màn hình công việc hiện dùng dữ liệu mẫu cố định, yêu cầu đăng nhập.
 
-Đề tài hướng đến việc hỗ trợ ứng viên xây dựng hồ sơ và tìm kiếm công việc phù hợp từ các nguồn tuyển dụng được cấu hình sẵn. Hệ thống sử dụng thông tin về học vấn, kỹ năng, kinh nghiệm, dự án và nguyện vọng của ứng viên để hỗ trợ tạo CV, tìm kiếm tin tuyển dụng và đối chiếu với yêu cầu của từng vị trí.
+## Cài đặt và chạy trên Windows
 
-Kết quả được trình bày dưới dạng danh sách công việc xếp theo mức độ phù hợp, kèm liên kết tin tuyển dụng, các yêu cầu đã đáp ứng, các yêu cầu còn thiếu hoặc chưa đủ thông tin, giải thích đánh giá và gợi ý cải thiện.
-
-## 2. Quy trình nghiệp vụ
-
-```mermaid
-flowchart TD
-    A[Đăng ký / Đăng nhập] --> B[Nhập hồ sơ và nguyện vọng]
-    B --> C[AI hỗ trợ tạo lập CV]
-    C --> D[Tự động tìm tin từ các nguồn tuyển dụng]
-    D --> E[Thu thập và chuẩn hóa yêu cầu công việc]
-    E --> F[Đối chiếu hồ sơ và đánh giá mức độ phù hợp]
-    F --> G[Hiển thị danh sách công việc được xếp hạng]
-```
-
-Người dùng nhập thông tin hồ sơ; hệ thống chủ động tìm kiếm công việc từ danh sách nguồn đã cấu hình. Người dùng có thể chỉnh sửa hồ sơ và xem lại lịch sử kết quả.
-
-## 3. Phạm vi chức năng
-
-| Nhóm chức năng | Nội dung dự kiến |
-| :--- | :--- |
-| Quản lý tài khoản | Đăng ký, đăng nhập, đăng xuất và kiểm soát quyền truy cập dữ liệu |
-| Quản lý hồ sơ | Nhập, lưu và chỉnh sửa thông tin cá nhân, học vấn, kỹ năng, kinh nghiệm, dự án và nguyện vọng |
-| Tạo lập CV | AI hỗ trợ biên soạn nội dung, lưu phiên bản và xuất PDF/DOCX |
-| Tìm kiếm việc làm | Tự động tìm tin tuyển dụng từ các nguồn được cấu hình sẵn dựa trên hồ sơ |
-| Đánh giá mức độ phù hợp | Đối chiếu hồ sơ với yêu cầu công việc và giải thích kết quả |
-| Hiển thị kết quả | Xếp hạng công việc, cung cấp link tin gốc, điểm đáp ứng, điểm còn thiếu và gợi ý cải thiện |
-| Lịch sử | Lưu và xem lại các lượt tìm kiếm, đánh giá |
-
-TopCV là nguồn dự kiến khảo sát đầu tiên. Danh sách nguồn tích hợp chính thức được xác định sau khi kiểm tra khả năng và điều kiện truy cập dữ liệu.
-
-## 4. Kết quả thực hiện tuần 1
-
-| Hạng mục | Kết quả |
-| :--- | :--- |
-| Phân tích yêu cầu | Xác định mục tiêu, phạm vi, tác nhân và luồng nghiệp vụ chính |
-| Thiết kế hệ thống | Đề xuất kiến trúc, quy trình xử lý và phương án đánh giá |
-| Thiết kế dữ liệu | Xây dựng mô hình và script SQL cho tài khoản, hồ sơ, CV, nguồn tuyển dụng, tin tuyển dụng và kết quả |
-| Khởi tạo ứng dụng | Thiết lập FastAPI, cấu hình môi trường và cấu trúc mã nguồn |
-| Nguyên mẫu giao diện | Màn hình nhập hồ sơ và danh sách kết quả đánh giá minh họa |
-| Kiểm tra hoạt động | Chạy ứng dụng, kiểm tra API và thao tác nhập hồ sơ, hiển thị kết quả trên trình duyệt |
-
-### Giới hạn của phiên bản hiện tại
-
-Phiên bản tuần 1 phục vụ kiểm tra cấu trúc và luồng giao diện. Công việc và điểm đánh giá sử dụng dữ liệu mẫu cố định; thông tin nhập chưa được lưu. Các chức năng xác thực tài khoản, tạo CV bằng AI, thu thập tin tuyển dụng thực tế và xuất tài liệu được triển khai ở các giai đoạn tiếp theo.
-
-Script SQL hiện là bản thiết kế khởi tạo, chưa được kiểm chứng trên MySQL thực tế. API kiểm tra hoạt động chỉ xác nhận ứng dụng đang chạy.
-
-## 5. Công nghệ sử dụng
-
-| Thành phần | Công nghệ |
-| :--- | :--- |
-| Ngôn ngữ và backend | Python, FastAPI |
-| Giao diện | HTML, CSS, JavaScript |
-| Cơ sở dữ liệu | MySQL, SQLAlchemy, PyMySQL |
-| AI dự kiến tích hợp | Google Gemini API |
-| Xử lý và thu thập dữ liệu dự kiến | Pandas, web scraping |
-| Định dạng tài liệu đầu ra | PDF, DOCX |
-| Công cụ phát triển | VS Code, Git/GitHub, Postman |
-
-## 6. Cấu trúc repository
-
-```text
-ai-cv-recruitment/
-├── app/
-│   ├── config.py           # Cấu hình môi trường
-│   ├── database.py         # Thiết lập kết nối MySQL
-│   └── main.py             # Ứng dụng và API
-├── database/
-│   └── schema.sql          # Thiết kế cơ sở dữ liệu
-├── docs/
-│   └── week-1.md           # Phân tích yêu cầu và thiết kế tuần 1
-├── static/
-│   ├── index.html          # Nguyên mẫu giao diện
-│   ├── styles.css          # Định dạng giao diện
-│   └── app.js              # Tương tác giao diện
-├── .env.example            # Cấu hình mẫu
-├── requirements.txt        # Thư viện Python
-├── run.bat                 # Khởi động trên Windows
-└── README.md
-```
-
-## 7. Hướng dẫn cài đặt và chạy
-
-### Yêu cầu môi trường
-
-- Python 3.11 trở lên.
-- Git để tải mã nguồn.
-- Windows để sử dụng `run.bat`.
-
-Bản nguyên mẫu tuần 1 có thể chạy mà chưa cần cài MySQL hoặc cung cấp khóa Gemini.
-
-### Tải mã nguồn
-
-```powershell
-git clone https://github.com/Thaiabcc/ai-cv-recruitment.git
-cd ai-cv-recruitment
-```
-
-Repository riêng tư yêu cầu tài khoản đã được cấp quyền truy cập.
-
-### Cài đặt lần đầu
+Python 3.10 trở lên, MySQL 8.0.16 trở lên (đã kiểm thử với MySQL 8.4.9).
 
 ```powershell
 python -m venv .venv
@@ -120,45 +23,75 @@ python -m venv .venv
 Copy-Item .env.example .env
 ```
 
-### Khởi động
+Điền thông tin kết nối MySQL trong `.env`. Không đưa mật khẩu, khóa API hoặc hồ sơ thực tế lên Git.
+
+Với database mới, mở MySQL Workbench và chạy lần lượt:
+
+1. `database/schema.sql` — tạo database và 7 bảng nghiệp vụ, chỉ chạy trên database phát triển mới.
+2. `database/week-2.sql` — thêm bảng phiên đăng nhập; có thể chạy lại, giữ dữ liệu hiện có.
+
+Nếu đã có database tuần 1, **chỉ chạy `database/week-2.sql`**. Ứng dụng không tự chạy migration.
 
 ```powershell
 .\run.bat
 ```
 
-| Nội dung | Địa chỉ |
-| :--- | :--- |
-| Giao diện ứng dụng | http://127.0.0.1:8000 |
-| Tài liệu và thử API | http://127.0.0.1:8000/docs |
-| Kiểm tra hoạt động | http://127.0.0.1:8000/api/health |
+- Giao diện: http://127.0.0.1:8001
+- Tài liệu API: http://127.0.0.1:8001/docs
+- Kiểm tra ứng dụng: http://127.0.0.1:8001/api/health (không xác nhận kết nối database).
 
-Dừng ứng dụng bằng **Ctrl + C**. Nếu cổng 8000 đang được sử dụng, chạy `.\run.bat --port 8001` và truy cập http://127.0.0.1:8001.
+Đăng ký bằng email và mật khẩu 8–128 ký tự; đăng ký thành công sẽ tự đăng nhập. Điền hồ sơ rồi chọn **Lưu hồ sơ**. Khi chạy qua HTTPS, cấu hình `COOKIE_SECURE=true`. Mặc định dùng HTTP cho localhost, thời hạn phiên `SESSION_HOURS=24`.
 
-### Cấu hình cho các giai đoạn tiếp theo
+## API tuần 2
 
-Thông số MySQL và khóa Gemini được đặt trong `.env` theo mẫu `.env.example`. Script `database/schema.sql` dành cho database phát triển mới và không được ứng dụng tự thực thi. Các bước kết nối dịch vụ thực tế sẽ được cập nhật khi triển khai.
+| Phương thức | Đường dẫn | Chức năng |
+| --- | --- | --- |
+| POST | `/api/auth/register` | Đăng ký và tạo phiên |
+| POST | `/api/auth/login` | Đăng nhập |
+| POST | `/api/auth/logout` | Xóa phiên ở server và cookie |
+| GET | `/api/auth/me` | Tài khoản đang đăng nhập |
+| GET | `/api/profile` | Hồ sơ của tài khoản hiện tại; `null` nếu chưa tạo |
+| PUT | `/api/profile` | Tạo hoặc thay thế toàn bộ hồ sơ hiện tại |
 
-File `.env`, mật khẩu, khóa API và hồ sơ ứng viên thực tế không được đưa vào repository.
+Các yêu cầu thay đổi dữ liệu phải có header `X-Requested-With: cv-app`; Origin nếu có phải trùng nguồn. Khi thử API ngoài giao diện, cần giữ cookie giữa các yêu cầu và gửi header trên. API không cho truyền `user_id` để chọn chủ hồ sơ. Không bật CORS.
 
-## 8. Kế hoạch thực hiện
+## Kiểm thử
 
-| Kế hoạch | Thực hiện |
-| :--- | :--- |
-| **Tuần 1:** Phân tích yêu cầu, thiết kế dữ liệu, kiến trúc và nguyên mẫu giao diện | Đã xác định phạm vi và luồng nghiệp vụ; lập tài liệu phân tích, kiến trúc và thiết kế SQL; khởi tạo FastAPI; xây dựng và kiểm tra giao diện nhập hồ sơ, hiển thị kết quả minh họa; bàn giao mã nguồn với tag `week-1`. |
-| **Tuần 2:** Xây dựng đăng ký, đăng nhập, đăng xuất; kiểm soát quyền truy cập; quản lý và lưu hồ sơ ứng viên trong MySQL | |
-| **Tuần 3:** Tích hợp Gemini hỗ trợ tạo, chỉnh sửa và lưu phiên bản CV; xuất CV dưới định dạng PDF/DOCX | |
-| **Tuần 4:** Khảo sát và tích hợp nguồn tuyển dụng; tự động tìm tin theo hồ sơ; thu thập, chuẩn hóa, loại trùng dữ liệu và xử lý tác vụ nền, lỗi nguồn | |
-| **Tuần 5:** Hoàn thiện đối chiếu hồ sơ, đánh giá và giải thích mức độ phù hợp; xếp hạng công việc, gợi ý cải thiện và lưu lịch sử; tích hợp giao diện và hoàn thành toàn bộ chức năng của hệ thống | |
-| **Tuần 6:** Kiểm thử chức năng và tích hợp; đánh giá chất lượng kết quả; sửa lỗi, tối ưu hiệu năng và giao diện | |
-| **Tuần 7:** Hoàn thiện báo cáo đồ án và poster | |
-| **Tuần 8:** Kiểm tra đạo văn, chỉnh sửa; chuẩn bị slide và demo bảo vệ | |
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+```
 
-Cột **Thực hiện** được cập nhật theo kết quả thực tế của từng tuần; các tuần chưa thực hiện được để trống.
+Mặc định dùng SQLite trong bộ nhớ, không tác động database dự án. Kiểm thử tích hợp trên MySQL đã áp dụng migration:
 
-## 9. Tài liệu và phiên bản
+```powershell
+$env:TEST_MYSQL='1'
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+Remove-Item Env:TEST_MYSQL
+```
 
-- [Phân tích yêu cầu và thiết kế tuần 1](docs/week-1.md).
-- [Script thiết kế cơ sở dữ liệu](database/schema.sql).
-- [Phiên bản mã nguồn tại mốc tuần 1](https://github.com/Thaiabcc/ai-cv-recruitment/tree/week-1).
+Bộ kiểm thử MySQL dùng kết nối trong một giao dịch ngoài, các yêu cầu dùng savepoint; rollback sau mỗi ca để không lưu tài khoản và hồ sơ thử nghiệm. Bao phủ xác thực, trùng email, dữ liệu không hợp lệ, băm mật khẩu, cookie, chống yêu cầu khác nguồn, hết hạn phiên, đăng xuất, lưu/chỉnh sửa và tách biệt hai tài khoản. Chi tiết tại [tài liệu tuần 2](docs/week-2.md).
 
-Nhánh `main` chứa các cập nhật mới nhất. Tag `week-1` giữ nguyên mã nguồn tại thời điểm bàn giao tuần 1.
+## Kế hoạch 8 tuần
+
+| Tuần | Nội dung | Tiến độ |
+| --- | --- | --- |
+| 1 | Phân tích, thiết kế, nguyên mẫu | Hoàn thành, tag `week-1` |
+| 2 | Tài khoản, phân quyền, lưu hồ sơ MySQL | Hoàn thành, đã nghiệm thu giao diện; tag `week-2` |
+| 3 | Gemini tạo/chỉnh sửa CV, lưu phiên bản, xuất PDF/DOCX | Chưa thực hiện |
+| 4 | Khảo sát nguồn tuyển dụng, tìm/thu thập/chuẩn hóa dữ liệu, tác vụ nền | Chưa thực hiện |
+| 5 | Đánh giá, giải thích, xếp hạng và lịch sử; hoàn thiện chức năng | Chưa thực hiện |
+| 6 | Kiểm thử tích hợp, đánh giá chất lượng và tối ưu | Chưa thực hiện |
+| 7 | Báo cáo và poster | Chưa thực hiện |
+| 8 | Kiểm tra đạo văn, chỉnh sửa, slide và demo bảo vệ | Chưa thực hiện |
+
+## Tài liệu và mã nguồn
+
+- [Thiết kế tuần 1](docs/week-1.md)
+- [Triển khai và kiểm thử tuần 2](docs/week-2.md)
+- [Thiết kế database](database/schema.sql), [migration tuần 2](database/week-2.sql)
+- `app/accounts.py`: xác thực và hồ sơ; `app/models.py`: ánh xạ database.
+- `static/`: giao diện HTML/CSS/JavaScript; `tests/`: kiểm thử API.
+- [Repository](https://github.com/Thaiabcc/ai-cv-recruitment), [mốc tuần 1](https://github.com/Thaiabcc/ai-cv-recruitment/tree/week-1), [mốc tuần 2](https://github.com/Thaiabcc/ai-cv-recruitment/tree/week-2).
+
+Trước khi triển khai Internet cần bổ sung giới hạn thử đăng nhập ở ứng dụng/proxy, xác minh email và khôi phục mật khẩu; sử dụng tài khoản database có quyền giới hạn và HTTPS. Phiên bản hiện tại phục vụ phát triển và nghiệm thu đồ án trên localhost.

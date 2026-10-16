@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     db_user: str = "root"
     db_password: SecretStr = SecretStr("")
     gemini_api_key: SecretStr = SecretStr("")
+    cookie_secure: bool = False
+    session_hours: int = 24
 
 
 settings = Settings()

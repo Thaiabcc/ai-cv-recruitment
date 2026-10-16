@@ -1,9 +1,27 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, Request
+from fastapi.responses import JSONResponse
+from sqlalchemy.exc import SQLAlchemyError
+from app.accounts import router, current_user
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from app.config import ROOT_DIR, settings
 
-app = FastAPI(title=settings.app_name, version="0.1.0-week1")
+app = FastAPI(title=settings.app_name, version="0.2.0-week2")
+app.include_router(router)
+
+
+@app.middleware('http')
+async def private_responses(request: Request, call_next):
+    response = await call_next(request)
+    if request.url.path.startswith('/api/'):
+        response.headers['Cache-Control'] = 'no-store'
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    return response
+
+
+@app.exception_handler(SQLAlchemyError)
+async def database_error(request: Request, exc: SQLAlchemyError):
+    return JSONResponse(status_code=503, content={'detail': 'Chưa thể truy cập cơ sở dữ liệu. Vui lòng thử lại sau.'})
 app.mount("/static", StaticFiles(directory=ROOT_DIR / "static"), name="static")
 
 @app.get("/", include_in_schema=False)
@@ -13,9 +31,9 @@ def home():
 @app.get("/api/health", tags=["System"])
 def health():
     """Application health only; does not check MySQL or Gemini."""
-    return {"status": "ok", "app": settings.app_name, "version": "0.1.0-week1"}
+    return {"status": "ok", "app": settings.app_name, "version": "0.2.0-week2"}
 
-@app.get("/api/demo/recommendations", tags=["Week 1 demo"])
+@app.get("/api/demo/recommendations", tags=["Demo"], dependencies=[Depends(current_user)])
 def demo_recommendations():
     """Fictional fixed examples, no crawling or AI scoring."""
     jobs = [

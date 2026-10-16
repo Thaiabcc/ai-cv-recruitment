@@ -2,33 +2,34 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI CV Recruitment — Tuần 1</title>
+<meta name="theme-color" content="#123e35">
+<title>AI CV Recruitment — Không gian ứng viên</title>
 <link rel="stylesheet" href="/static/styles.css"><script src="/static/app.js" defer></script>
 </head>
-<body><main>
-<span class="badge">ĐỒ ÁN TỐT NGHIỆP · TUẦN 1</span>
-<h1>Từ hồ sơ của bạn<br>đến công việc phù hợp.</h1>
-<p class="intro">Tạo CV với AI, tự động tìm việc từ các nguồn tuyển dụng có sẵn và xem những vị trí phù hợp nhất với bạn.</p>
-<p class="notice">Bản tuần 1 là giao diện minh họa. Tài khoản, tạo CV, tìm tin thật và đánh giá bằng AI sẽ được triển khai ở các tuần tiếp theo.</p>
-<section><h2>Một lần nhập hồ sơ, một hành trình tìm việc</h2>
-<ol class="flow"><li>Đăng ký / đăng nhập</li><li>Nhập hồ sơ</li><li>AI tạo CV</li><li>Tự tìm việc</li><li>Đánh giá và xếp hạng</li></ol></section>
-<section><h2>Hồ sơ ứng viên</h2>
-<p>Thử điền để xem cách bố trí màn hình. Thông tin chỉ nằm trên trang này, không được gửi hoặc lưu.</p>
-<form id="profile-form"><div class="fields">
-<label>Họ và tên<input name="full_name" autocomplete="name" placeholder="Nguyễn Văn A" required></label>
-<label>Vị trí mong muốn<input name="desired_position" placeholder="Python Backend Intern" required></label>
-<label>Địa điểm<input name="location" placeholder="Hà Nội / Làm việc từ xa"></label>
-<label>Mức lương mong muốn<input name="salary" placeholder="Thỏa thuận"></label>
-<label>Học vấn<textarea name="education" placeholder="Ngành học, trường, thời gian"></textarea></label>
-<label>Kỹ năng<textarea name="skills" placeholder="Python, FastAPI, MySQL…" required></textarea></label>
-<label>Kinh nghiệm<textarea name="experience" placeholder="Vị trí, thời gian, công việc đã thực hiện"></textarea></label>
-<label>Dự án<textarea name="projects" placeholder="Tên dự án, vai trò, kết quả, link sản phẩm"></textarea></label>
-</div><button type="submit" id="preview-button">Xem kết quả minh họa</button></form></section>
-<section><h2>Nguồn tuyển dụng dự kiến</h2>
-<p>TopCV và các nguồn tương tự sẽ được cấu hình sẵn trong hệ thống. Chưa kết nối nguồn nào trong bản tuần 1; danh sách chính thức được chốt sau khi kiểm tra khả năng truy cập dữ liệu.</p>
-<a href="https://www.topcv.vn/" target="_blank" rel="noopener noreferrer">Xem trang TopCV</a></section>
-<section id="results" hidden><h2>Công việc theo mức độ phù hợp</h2>
-<p class="notice">Công việc và điểm là dữ liệu giả lập cố định, không phụ thuộc thông tin bạn nhập. Tin thật sẽ có link trực tiếp tới từng công việc.</p>
-<p id="result-status" role="status"></p><div class="features" id="job-list"></div></section>
-<footer><p id="status" role="status">Đang kiểm tra máy chủ…</p><a href="/docs">Xem tài liệu API</a></footer>
+<body>
+<header class="topbar"><a href="/" class="brand" aria-label="AI CV Recruitment - Trang chủ"><span class="brand-mark">cv<span>✦</span></span><span>AI CV<span class="brand-light"> Recruitment</span></span></a><span class="topbar-note">Không gian dành cho ứng viên</span><span class="privacy-pill"><span class="dot"></span> Hồ sơ riêng tư</span></header>
+<main>
+<p id="message" class="message" role="status" aria-live="polite">Đang kiểm tra phiên đăng nhập…</p>
+<section id="auth-section" class="auth-layout" hidden>
+<div class="auth-story"><span class="eyebrow">BƯỚC TIẾP THEO TRONG SỰ NGHIỆP</span><h1>Cơ hội tốt bắt đầu<br>từ một hồ sơ <em>tốt.</em></h1><p>Một nơi để lưu kinh nghiệm, thể hiện thế mạnh và chuẩn bị cho hành trình nghề nghiệp của bạn.</p>
+<div class="profile-illustration" aria-hidden="true"><div class="illustration-top"><span class="illustration-avatar">CV</span><div><b>Hồ sơ của bạn</b><span>Sẵn sàng cho cơ hội mới</span></div><span class="illustration-check">✓</span></div><div class="illustration-line long"></div><div class="illustration-line"></div><div class="illustration-tags"><span>Kinh nghiệm</span><span>Kỹ năng</span><span>Dự án</span></div><div class="illustration-bottom"><span class="dot"></span> Mỗi kinh nghiệm đều có giá trị</div></div>
+<div class="story-bottom"><span>01 / Tạo hồ sơ</span><span>02 / Phát triển sự nghiệp</span></div></div>
+<div class="auth-panel"><span class="eyebrow muted">CHÀO MỪNG BẠN</span><h2 id="auth-title">Đăng nhập</h2><p class="auth-description" id="auth-description">Tiếp tục xây dựng hồ sơ và lưu lại hành trình của bạn.</p>
+<form id="auth-form"><div class="auth-fields"><label>Email<input type="email" name="email" autocomplete="username" maxlength="254" placeholder="ban@example.com" required></label><label>Mật khẩu<span class="password-wrap"><input type="password" name="password" autocomplete="current-password" minlength="8" maxlength="128" placeholder="Nhập mật khẩu của bạn" required><button type="button" id="password-toggle" class="password-toggle" aria-label="Hiện mật khẩu" aria-pressed="false">Hiện</button></span></label></div><p class="field-hint">Sử dụng mật khẩu từ 8 đến 128 ký tự.</p><button id="auth-submit" class="primary auth-submit" type="submit">Đăng nhập</button><button id="auth-switch" type="button" class="text-button">Chưa có tài khoản? Đăng ký</button></form>
+<div class="auth-assurance"><span class="shield" aria-hidden="true">✓</span><p>Thông tin của bạn được lưu riêng theo tài khoản. Chỉ bạn có thể xem và chỉnh sửa hồ sơ.</p></div></div>
+</section>
+<section id="account-section" class="account-bar" hidden><div class="account-identity"><span class="avatar" id="account-avatar">CV</span><div><span class="small-label">Tài khoản của bạn</span><strong id="account-email"></strong></div></div><button id="logout" type="button" class="secondary compact">Đăng xuất <span aria-hidden="true">↗</span></button></section>
+<section id="profile-section" hidden>
+<div class="workspace-heading"><div><div class="breadcrumb">Không gian ứng viên <span>/</span> Hồ sơ cá nhân</div><h1>Hồ sơ của tôi<span class="heading-dot">.</span></h1><p>Cập nhật thông tin để kể câu chuyện nghề nghiệp của bạn.</p></div><span class="workspace-badge"><span class="dot"></span> Chỉ mình bạn</span></div>
+<div class="workspace-grid"><aside class="profile-sidebar"><div class="sidebar-card"><span class="eyebrow muted">NỘI DUNG HỒ SƠ</span><nav aria-label="Các phần hồ sơ"><a href="#personal" class="section-link"><span>01</span> Thông tin cá nhân</a><a href="#background" class="section-link"><span>02</span> Học vấn & kỹ năng</a><a href="#career" class="section-link"><span>03</span> Kinh nghiệm & dự án</a><a href="#preferences" class="section-link"><span>04</span> Nguyện vọng</a></nav><div class="completion"><div><span>Mức độ điền hồ sơ</span><strong id="completion-count">0/11</strong></div><progress id="completion-progress" value="0" max="11" aria-label="Số trường đã điền"></progress><p>Thêm thông tin để hồ sơ thể hiện rõ hơn thế mạnh của bạn.</p></div></div><div class="sidebar-tip"><span class="tip-icon" aria-hidden="true">✦</span><h3>Một hồ sơ, nhiều cơ hội</h3><p>Ưu tiên kinh nghiệm liên quan và kết quả cụ thể. Bạn có thể quay lại chỉnh sửa bất cứ lúc nào.</p></div></aside>
+<form id="profile-form" class="profile-form">
+<section class="form-card" id="personal"><div class="card-heading"><span class="section-number">01</span><div><h2>Thông tin cá nhân</h2><p>Những thông tin cơ bản để giới thiệu về bạn.</p></div><span class="required-note">* Bắt buộc</span></div><div class="fields"><label>Họ và tên <span class="required">*</span><input name="full_name" autocomplete="name" maxlength="200" placeholder="Ví dụ: Nguyễn Minh Anh" required></label><label>Số điện thoại<input name="phone" type="tel" autocomplete="tel" maxlength="50" placeholder="Nhập số điện thoại liên hệ"></label><label class="full-width">Địa chỉ liên hệ<input name="address" autocomplete="street-address" maxlength="500" placeholder="Tỉnh / thành phố, địa chỉ của bạn"></label></div></section>
+<section class="form-card" id="background"><div class="card-heading"><span class="section-number">02</span><div><h2>Học vấn & kỹ năng</h2><p>Nền tảng và những điều bạn làm tốt.</p></div></div><div class="fields"><label>Học vấn<textarea name="education" maxlength="10000" placeholder="Trường, ngành học và thời gian học…"></textarea><span class="field-hint">Có thể thêm bằng cấp hoặc chứng chỉ liên quan.</span></label><label>Kỹ năng<textarea name="skills" maxlength="10000" placeholder="Ví dụ: Python, FastAPI, MySQL, làm việc nhóm…"></textarea><span class="field-hint">Gồm kỹ năng chuyên môn và kỹ năng mềm.</span></label></div></section>
+<section class="form-card" id="career"><div class="card-heading"><span class="section-number">03</span><div><h2>Kinh nghiệm & dự án</h2><p>Thể hiện giá trị qua những việc bạn đã thực hiện.</p></div></div><div class="fields"><label class="full-width">Kinh nghiệm làm việc<textarea name="experience" maxlength="10000" placeholder="Công ty · Vị trí · Thời gian&#10;Mô tả công việc và kết quả nổi bật…"></textarea></label><label class="full-width">Dự án nổi bật<textarea name="projects" maxlength="10000" placeholder="Tên dự án · Vai trò của bạn&#10;Công nghệ, kết quả và liên kết sản phẩm…"></textarea><span class="field-hint">Chưa có kinh nghiệm? Hãy chia sẻ dự án học tập hoặc cá nhân.</span></label></div></section>
+<section class="form-card" id="preferences"><div class="card-heading"><span class="section-number">04</span><div><h2>Nguyện vọng nghề nghiệp</h2><p>Công việc tiếp theo mà bạn đang hướng đến.</p></div></div><div class="fields"><label class="full-width">Vị trí mong muốn<input name="desired_position" maxlength="200" placeholder="Ví dụ: Python Backend Intern"></label><label>Địa điểm làm việc<input name="location" maxlength="200" placeholder="Ví dụ: Hà Nội / Làm việc từ xa"></label><label>Mức lương mong muốn<input name="salary" maxlength="200" placeholder="Ví dụ: 10–15 triệu / Thỏa thuận"></label><label class="full-width">Nguyện vọng khác<textarea name="wishes" maxlength="10000" placeholder="Môi trường làm việc, hình thức làm việc, mục tiêu phát triển…"></textarea></label></div></section>
+<div class="save-bar"><div><p id="save-status" role="status" aria-live="polite"></p><span class="field-hint">Nhấn lưu để cập nhật những thay đổi của bạn.</span></div><button type="submit" id="save-button" class="primary"><span aria-hidden="true">✓</span> Lưu hồ sơ</button></div>
+<div class="demo-card"><div><span class="eyebrow muted">KHÁM PHÁ TIẾP THEO</span><h3>Hình dung cơ hội nghề nghiệp của bạn</h3><p>Xem trước cách hệ thống trình bày công việc. Hiện sử dụng dữ liệu minh họa.</p></div><button type="button" id="preview-button" class="secondary">Xem minh họa <span aria-hidden="true">→</span></button></div>
+</form></div></section>
+<section id="results" class="results-section" hidden><div class="results-heading"><div><span class="eyebrow muted">XEM TRƯỚC</span><h2>Công việc minh họa</h2></div><span class="demo-label">Dữ liệu mẫu</span></div><p class="notice">Đây là công việc và điểm giả lập cố định, chưa được AI đánh giá theo hồ sơ của bạn.</p><p id="result-status" class="field-hint" role="status"></p><div class="features" id="job-list"></div></section>
+<footer><span class="footer-brand">AI CV Recruitment <span>· Không gian cho bước tiến mới</span></span><p id="status" role="status"></p></footer>
 </main></body></html>
