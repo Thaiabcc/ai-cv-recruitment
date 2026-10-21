@@ -225,3 +225,5 @@ __marimo__/
 !.env.example
 uploads/
 exports/
+# Week 3 QA and private generated documents
+/tmp/

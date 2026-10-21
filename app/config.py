@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     db_user: str = "root"
     db_password: SecretStr = SecretStr("")
     gemini_api_key: SecretStr = SecretStr("")
+    gemini_model: str = "gemini-3.8-flash"
+    cv_font_path: str = ""
+    cv_font_bold_path: str = ""
     cookie_secure: bool = False
     session_hours: int = 24
 
