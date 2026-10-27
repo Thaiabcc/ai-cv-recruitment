@@ -75,7 +75,7 @@ def create(data: SearchRequest, user: User = Depends(current_user), db: Session 
         'keywords': keywords, 'location': snapshot.get('location', '') if data.location is None else data.location,
         'profile': snapshot, 'cv': parent.content['document'], 'source_ids': [s.id for s in sources],
         'scope': '; '.join(SOURCES[source.domain]['name'] + ': ' + SOURCES[source.domain]['scope'] for source in sources)
-                 + '. Lọc từ khóa/địa điểm, chưa chấm điểm và chưa lọc lương.'})
+                 + '. Bước tìm tin lọc từ khóa/địa điểm, chưa lọc lương; có thể đánh giá bằng Ollama sau khi tìm xong.'})
     db.add(run); db.commit(); db.refresh(run)
     return output(run)
 

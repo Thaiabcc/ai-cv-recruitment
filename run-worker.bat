@@ -6,6 +6,6 @@ if not exist ".venv\Scripts\python.exe" (
     pause
     exit /b 1
 )
-echo Worker tim viec dang chay. Nhan Ctrl+C de dung.
+echo Worker tim viec va danh gia dang chay. Nhan Ctrl+C de dung.
 ".venv\Scripts\python.exe" -m app.worker %*
 if errorlevel 1 pause

@@ -1,0 +1,810 @@
+{
+  "report_date": "2026-10-28",
+  "timezone": "Asia/Bangkok",
+  "base_commit": "9c4ca90d343c94cb7f41ab6862d92e36d35de749",
+  "file_sha256": {
+    "app/evaluation_ai.py": "de8d7d2334766b3a520b655b6e47cd4210a8bccf91ede104296a9891bad01426",
+    "app/evaluation_worker.py": "298490cac1159fd1eda06f1434403a74489a6e3d2b11c4421fb1c9798dd34783",
+    "app/evaluations.py": "71e24c93c70b3b3534b057314de4127152c92cb4afc4f56b125b8b8ea1ac3928",
+    "app/database.py": "c1515c815f19891dea9ecc43fda00aa74d0aade64f9946dc619c35708e073e95",
+    "app/models.py": "e0e3ceafbf93e1d5eb7a00398b89c4369705d1d45c3aaff6931100f848da4fc8",
+    "app/worker.py": "01e7fc8ec937f10c9d76f02e7a6ccb4994a6b91b06fc833b0125f7a38dacd98e",
+    "static/app.js": "f7a140dcc734ea30f78a421411af5cd2c20153708408a43a3a5fdf9dae55cea2",
+    "database/week-5.sql": "3606e31af79cd5efcb21d1642696dad7c8590855b74dca46cb1cab590156277c",
+    "tests/test_evaluations.py": "0d4a52c07c841b34b61d9ed700a27b5f2617e133d24d950653fb550f91308f91"
+  },
+  "automated": [
+    {
+      "database": "mysql",
+      "run": 62,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 9.344,
+      "cases": [
+        {
+          "test": "test_accounts.AccountTests.test_anonymous_and_csrf",
+          "status": "passed",
+          "seconds": 0.094
+        },
+        {
+          "test": "test_accounts.AccountTests.test_duplicate_and_validation",
+          "status": "passed",
+          "seconds": 0.156
+        },
+        {
+          "test": "test_accounts.AccountTests.test_empty_and_oversized_profile",
+          "status": "passed",
+          "seconds": 0.094
+        },
+        {
+          "test": "test_accounts.AccountTests.test_expiry_and_invalid_token",
+          "status": "passed",
+          "seconds": 0.078
+        },
+        {
+          "test": "test_accounts.AccountTests.test_login_logout_and_revocation",
+          "status": "passed",
+          "seconds": 0.218
+        },
+        {
+          "test": "test_accounts.AccountTests.test_profile_persistence_and_isolation",
+          "status": "passed",
+          "seconds": 0.422
+        },
+        {
+          "test": "test_accounts.AccountTests.test_register_hash_and_cookie",
+          "status": "passed",
+          "seconds": 0.141
+        },
+        {
+          "test": "test_cvs.CVTests.test_ai_generation_minimizes_contact_data",
+          "status": "passed",
+          "seconds": 0.109
+        },
+        {
+          "test": "test_cvs.CVTests.test_ai_provider_failures_do_not_save_versions",
+          "status": "passed",
+          "seconds": 0.235
+        },
+        {
+          "test": "test_cvs.CVTests.test_ai_revision_uses_original_snapshot",
+          "status": "passed",
+          "seconds": 0.125
+        },
+        {
+          "test": "test_cvs.CVTests.test_authentication_and_missing_profile",
+          "status": "passed",
+          "seconds": 0.093
+        },
+        {
+          "test": "test_cvs.CVTests.test_cross_account_access",
+          "status": "passed",
+          "seconds": 0.219
+        },
+        {
+          "test": "test_cvs.CVTests.test_draft_manual_versions_and_snapshot",
+          "status": "passed",
+          "seconds": 0.219
+        },
+        {
+          "test": "test_cvs.CVTests.test_exports_vietnamese_and_untrusted_text",
+          "status": "passed",
+          "seconds": 0.391
+        },
+        {
+          "test": "test_cvs.CVTests.test_history_pagination",
+          "status": "passed",
+          "seconds": 0.125
+        },
+        {
+          "test": "test_cvs.CVTests.test_lavender_heading_accents_do_not_cross_vietnamese_text",
+          "status": "passed",
+          "seconds": 0.25
+        },
+        {
+          "test": "test_cvs.CVTests.test_long_cv_paginates_without_losing_end",
+          "status": "passed",
+          "seconds": 0.218
+        },
+        {
+          "test": "test_cvs.CVTests.test_missing_key_does_not_create_fake_ai_cv",
+          "status": "passed",
+          "seconds": 0.11
+        },
+        {
+          "test": "test_cvs.CVTests.test_pdf_preview_rejects_foreign_photo_and_requires_consent_header",
+          "status": "passed",
+          "seconds": 0.218
+        },
+        {
+          "test": "test_cvs.CVTests.test_pdf_splits_both_columns_and_wraps_long_name",
+          "status": "passed",
+          "seconds": 0.157
+        },
+        {
+          "test": "test_cvs.CVTests.test_photo_mysql_storage_validation_and_access",
+          "status": "passed",
+          "seconds": 0.375
+        },
+        {
+          "test": "test_cvs.CVTests.test_reference_layouts_split_long_unbroken_paragraphs",
+          "status": "passed",
+          "seconds": 0.39
+        },
+        {
+          "test": "test_cvs.CVTests.test_reference_templates_and_pdf_preview",
+          "status": "passed",
+          "seconds": 0.438
+        },
+        {
+          "test": "test_cvs.CVTests.test_templates_photo_required_and_private_version",
+          "status": "passed",
+          "seconds": 0.344
+        },
+        {
+          "test": "test_cvs.CVTests.test_validation_and_csrf",
+          "status": "passed",
+          "seconds": 0.125
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_auth_ownership_and_csrf",
+          "status": "passed",
+          "seconds": 0.25
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_cancel_fences_inflight_result",
+          "status": "passed",
+          "seconds": 0.187
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_database_timestamps_share_the_application_utc_clock",
+          "status": "passed",
+          "seconds": 0.125
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_duplicate_pending_guard_cancel_and_no_jobs",
+          "status": "passed",
+          "seconds": 0.125
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_history_paginates_without_exposing_other_users",
+          "status": "passed",
+          "seconds": 0.156
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_offline_does_not_repeat_service_calls",
+          "status": "passed",
+          "seconds": 0.157
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_partial_provider_failure_and_unknown_scores",
+          "status": "passed",
+          "seconds": 0.156
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_stale_worker_recovers_and_does_not_rerun_completed_job",
+          "status": "passed",
+          "seconds": 0.156
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_tied_scores_rank_more_complete_evidence_first",
+          "status": "passed",
+          "seconds": 0.172
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_two_worker_interruptions_stop_retrying",
+          "status": "passed",
+          "seconds": 0.156
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_worker_snapshot_ranking_and_preserves_prior_batch",
+          "status": "passed",
+          "seconds": 0.203
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_absence_is_not_unmet_and_explicit_shortfall_is_allowed",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_ai_errors_and_long_inputs_never_create_score",
+          "status": "passed",
+          "seconds": 0.016
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_exact_basic_skills_can_recover_unknown_without_inference",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_fabricated_evidence_downgrades_to_unknown_and_source_quote_rejected",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_local_payload_excludes_contacts_and_uses_8192_schema",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_missing_category_renormalizes_and_all_unknown_is_not_zero",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_one_tool_does_not_satisfy_an_entire_compound_requirement",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_sensitive_requirements_are_not_scored",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_technical_tool_list_is_not_evidence_of_soft_skills",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_unfinished_education_cannot_receive_full_degree_credit",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_weighted_score_coverage_and_unknown",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_vietnam_sources.VietnamParserTests.test_detail_urls_are_fixed_origin_and_public_paths",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_vietnam_sources.VietnamParserTests.test_jobposting_normalization_dates_salary_and_location",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_vietnam_sources.VietnamParserTests.test_one_detail_error_returns_partial_batch",
+          "status": "passed",
+          "seconds": 0.078
+        },
+        {
+          "test": "test_vietnam_sources.VietnamParserTests.test_public_jsonld_graph_and_duplicate_links",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_vietnam_sources.VietnamParserTests.test_robots_denial_redirect_and_cache",
+          "status": "passed",
+          "seconds": 1.219
+        },
+        {
+          "test": "test_vietnam_sources.VietnamSearchTests.test_defaults_prioritize_vietnam_and_source_selection",
+          "status": "passed",
+          "seconds": 0.156
+        },
+        {
+          "test": "test_vietnam_sources.VietnamSearchTests.test_one_source_failure_keeps_other_results",
+          "status": "passed",
+          "seconds": 0.141
+        },
+        {
+          "test": "test_week4.OllamaTests.test_errors_incomplete_and_no_cloud_fallback",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_week4.OllamaTests.test_local_only_configuration",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_week4.OllamaTests.test_oversized_input_is_not_silently_truncated",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_week4.OllamaTests.test_schema_and_contact_minimization",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_week4.SearchTests.test_auth_and_ownership",
+          "status": "passed",
+          "seconds": 0.218
+        },
+        {
+          "test": "test_week4.SearchTests.test_empty_failed_and_stale_worker",
+          "status": "passed",
+          "seconds": 0.172
+        },
+        {
+          "test": "test_week4.SearchTests.test_normalization_filters_and_links",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_week4.SearchTests.test_queue_worker_results_snapshot_and_duplicate",
+          "status": "passed",
+          "seconds": 0.157
+        }
+      ]
+    },
+    {
+      "database": "sqlite",
+      "run": 62,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 8.859,
+      "cases": [
+        {
+          "test": "test_accounts.AccountTests.test_anonymous_and_csrf",
+          "status": "passed",
+          "seconds": 0.125
+        },
+        {
+          "test": "test_accounts.AccountTests.test_duplicate_and_validation",
+          "status": "passed",
+          "seconds": 0.14
+        },
+        {
+          "test": "test_accounts.AccountTests.test_empty_and_oversized_profile",
+          "status": "passed",
+          "seconds": 0.094
+        },
+        {
+          "test": "test_accounts.AccountTests.test_expiry_and_invalid_token",
+          "status": "passed",
+          "seconds": 0.078
+        },
+        {
+          "test": "test_accounts.AccountTests.test_login_logout_and_revocation",
+          "status": "passed",
+          "seconds": 0.219
+        },
+        {
+          "test": "test_accounts.AccountTests.test_profile_persistence_and_isolation",
+          "status": "passed",
+          "seconds": 0.359
+        },
+        {
+          "test": "test_accounts.AccountTests.test_register_hash_and_cookie",
+          "status": "passed",
+          "seconds": 0.125
+        },
+        {
+          "test": "test_cvs.CVTests.test_ai_generation_minimizes_contact_data",
+          "status": "passed",
+          "seconds": 0.094
+        },
+        {
+          "test": "test_cvs.CVTests.test_ai_provider_failures_do_not_save_versions",
+          "status": "passed",
+          "seconds": 0.172
+        },
+        {
+          "test": "test_cvs.CVTests.test_ai_revision_uses_original_snapshot",
+          "status": "passed",
+          "seconds": 0.125
+        },
+        {
+          "test": "test_cvs.CVTests.test_authentication_and_missing_profile",
+          "status": "passed",
+          "seconds": 0.094
+        },
+        {
+          "test": "test_cvs.CVTests.test_cross_account_access",
+          "status": "passed",
+          "seconds": 0.187
+        },
+        {
+          "test": "test_cvs.CVTests.test_draft_manual_versions_and_snapshot",
+          "status": "passed",
+          "seconds": 0.188
+        },
+        {
+          "test": "test_cvs.CVTests.test_exports_vietnamese_and_untrusted_text",
+          "status": "passed",
+          "seconds": 0.359
+        },
+        {
+          "test": "test_cvs.CVTests.test_history_pagination",
+          "status": "passed",
+          "seconds": 0.109
+        },
+        {
+          "test": "test_cvs.CVTests.test_lavender_heading_accents_do_not_cross_vietnamese_text",
+          "status": "passed",
+          "seconds": 0.094
+        },
+        {
+          "test": "test_cvs.CVTests.test_long_cv_paginates_without_losing_end",
+          "status": "passed",
+          "seconds": 0.25
+        },
+        {
+          "test": "test_cvs.CVTests.test_missing_key_does_not_create_fake_ai_cv",
+          "status": "passed",
+          "seconds": 0.11
+        },
+        {
+          "test": "test_cvs.CVTests.test_pdf_preview_rejects_foreign_photo_and_requires_consent_header",
+          "status": "passed",
+          "seconds": 0.187
+        },
+        {
+          "test": "test_cvs.CVTests.test_pdf_splits_both_columns_and_wraps_long_name",
+          "status": "passed",
+          "seconds": 0.172
+        },
+        {
+          "test": "test_cvs.CVTests.test_photo_mysql_storage_validation_and_access",
+          "status": "passed",
+          "seconds": 0.281
+        },
+        {
+          "test": "test_cvs.CVTests.test_reference_layouts_split_long_unbroken_paragraphs",
+          "status": "passed",
+          "seconds": 0.391
+        },
+        {
+          "test": "test_cvs.CVTests.test_reference_templates_and_pdf_preview",
+          "status": "passed",
+          "seconds": 0.39
+        },
+        {
+          "test": "test_cvs.CVTests.test_templates_photo_required_and_private_version",
+          "status": "passed",
+          "seconds": 0.329
+        },
+        {
+          "test": "test_cvs.CVTests.test_validation_and_csrf",
+          "status": "passed",
+          "seconds": 0.125
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_auth_ownership_and_csrf",
+          "status": "passed",
+          "seconds": 0.25
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_cancel_fences_inflight_result",
+          "status": "passed",
+          "seconds": 0.156
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_database_timestamps_share_the_application_utc_clock",
+          "status": "passed",
+          "seconds": 0.187
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_duplicate_pending_guard_cancel_and_no_jobs",
+          "status": "passed",
+          "seconds": 0.125
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_history_paginates_without_exposing_other_users",
+          "status": "passed",
+          "seconds": 0.141
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_offline_does_not_repeat_service_calls",
+          "status": "passed",
+          "seconds": 0.156
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_partial_provider_failure_and_unknown_scores",
+          "status": "passed",
+          "seconds": 0.141
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_stale_worker_recovers_and_does_not_rerun_completed_job",
+          "status": "passed",
+          "seconds": 0.156
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_tied_scores_rank_more_complete_evidence_first",
+          "status": "passed",
+          "seconds": 0.156
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_two_worker_interruptions_stop_retrying",
+          "status": "passed",
+          "seconds": 0.157
+        },
+        {
+          "test": "test_evaluations.EvaluationAPITests.test_worker_snapshot_ranking_and_preserves_prior_batch",
+          "status": "passed",
+          "seconds": 0.296
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_absence_is_not_unmet_and_explicit_shortfall_is_allowed",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_ai_errors_and_long_inputs_never_create_score",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_exact_basic_skills_can_recover_unknown_without_inference",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_fabricated_evidence_downgrades_to_unknown_and_source_quote_rejected",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_local_payload_excludes_contacts_and_uses_8192_schema",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_missing_category_renormalizes_and_all_unknown_is_not_zero",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_one_tool_does_not_satisfy_an_entire_compound_requirement",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_sensitive_requirements_are_not_scored",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_technical_tool_list_is_not_evidence_of_soft_skills",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_unfinished_education_cannot_receive_full_degree_credit",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_evaluations.ScoringTests.test_weighted_score_coverage_and_unknown",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_vietnam_sources.VietnamParserTests.test_detail_urls_are_fixed_origin_and_public_paths",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_vietnam_sources.VietnamParserTests.test_jobposting_normalization_dates_salary_and_location",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_vietnam_sources.VietnamParserTests.test_one_detail_error_returns_partial_batch",
+          "status": "passed",
+          "seconds": 0.063
+        },
+        {
+          "test": "test_vietnam_sources.VietnamParserTests.test_public_jsonld_graph_and_duplicate_links",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_vietnam_sources.VietnamParserTests.test_robots_denial_redirect_and_cache",
+          "status": "passed",
+          "seconds": 1.218
+        },
+        {
+          "test": "test_vietnam_sources.VietnamSearchTests.test_defaults_prioritize_vietnam_and_source_selection",
+          "status": "passed",
+          "seconds": 0.172
+        },
+        {
+          "test": "test_vietnam_sources.VietnamSearchTests.test_one_source_failure_keeps_other_results",
+          "status": "passed",
+          "seconds": 0.125
+        },
+        {
+          "test": "test_week4.OllamaTests.test_errors_incomplete_and_no_cloud_fallback",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_week4.OllamaTests.test_local_only_configuration",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_week4.OllamaTests.test_oversized_input_is_not_silently_truncated",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_week4.OllamaTests.test_schema_and_contact_minimization",
+          "status": "passed",
+          "seconds": 0.0
+        },
+        {
+          "test": "test_week4.SearchTests.test_auth_and_ownership",
+          "status": "passed",
+          "seconds": 0.235
+        },
+        {
+          "test": "test_week4.SearchTests.test_empty_failed_and_stale_worker",
+          "status": "passed",
+          "seconds": 0.14
+        },
+        {
+          "test": "test_week4.SearchTests.test_normalization_filters_and_links",
+          "status": "passed",
+          "seconds": 0.016
+        },
+        {
+          "test": "test_week4.SearchTests.test_queue_worker_results_snapshot_and_duplicate",
+          "status": "passed",
+          "seconds": 0.156
+        }
+      ]
+    }
+  ],
+  "live_before_soft_skill_fix": [
+    {
+      "case": "basic_skills",
+      "title": "Python Backend Intern",
+      "expected": "score 100; coverage 100",
+      "status": "completed",
+      "score": 100.0,
+      "information_coverage": 100.0,
+      "criteria_count": 3,
+      "criterion_status_counts": {
+        "matched": 3
+      },
+      "seconds": 29.141,
+      "http_status": 200,
+      "error": null,
+      "url": null,
+      "provider_metrics": {
+        "model": "qwen2.5:7b",
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 29050437500,
+        "prompt_eval_count": 534,
+        "eval_count": 179
+      }
+    },
+    {
+      "case": "incomplete_skills",
+      "title": "Python Infrastructure",
+      "expected": "score 33.33; coverage 33.33; Docker/Kubernetes unknown",
+      "status": "completed",
+      "score": 33.33,
+      "information_coverage": 33.33,
+      "criteria_count": 3,
+      "criterion_status_counts": {
+        "matched": 1,
+        "unknown": 2
+      },
+      "seconds": 15.922,
+      "http_status": 200,
+      "error": null,
+      "url": null,
+      "provider_metrics": {
+        "model": "qwen2.5:7b",
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 15869274000,
+        "prompt_eval_count": 526,
+        "eval_count": 147
+      }
+    },
+    {
+      "case": "benefits_only",
+      "title": "Tin chỉ có quyền lợi",
+      "expected": "score null; no requirements",
+      "status": "insufficient",
+      "score": null,
+      "information_coverage": 0.0,
+      "criteria_count": 0,
+      "criterion_status_counts": {},
+      "seconds": 0.953,
+      "http_status": 200,
+      "error": null,
+      "url": null,
+      "provider_metrics": {
+        "model": "qwen2.5:7b",
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 929682500,
+        "prompt_eval_count": 518,
+        "eval_count": 5
+      }
+    },
+    {
+      "case": "senior_java",
+      "title": "Senior Java Developer",
+      "expected": "No full credit for degree or Java; no inferred total years",
+      "status": "completed",
+      "score": 10.0,
+      "information_coverage": 20.0,
+      "criteria_count": 3,
+      "criterion_status_counts": {
+        "unknown": 2,
+        "partial": 1
+      },
+      "seconds": 23.406,
+      "http_status": 200,
+      "error": null,
+      "url": null,
+      "provider_metrics": {
+        "model": "qwen2.5:7b",
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 23358587600,
+        "prompt_eval_count": 558,
+        "eval_count": 202
+      }
+    },
+    {
+      "case": "real_careerviet",
+      "title": "Kỹ Sư Robotic",
+      "expected": "Manual review; no ground-truth score established",
+      "status": "completed",
+      "score": 15.0,
+      "information_coverage": 20.0,
+      "criteria_count": 12,
+      "criterion_status_counts": {
+        "unknown": 8,
+        "partial": 2,
+        "matched": 2
+      },
+      "seconds": 91.266,
+      "http_status": 200,
+      "error": null,
+      "url": "https://careerviet.vn/vi/tim-viec-lam/ky-su-robotic.35C894F7.html",
+      "provider_metrics": {
+        "model": "qwen2.5:7b",
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 91251163300,
+        "prompt_eval_count": 1066,
+        "eval_count": 747
+      }
+    }
+  ],
+  "soft_skill_fix": {
+    "before": {
+      "score": 15.0,
+      "coverage": 20.0
+    },
+    "replay_same_raw_response": {
+      "status": "completed",
+      "score": 5.0,
+      "coverage": 10.0,
+      "criterion_status_counts": {
+        "unknown": 10,
+        "partial": 2
+      }
+    },
+    "fresh_live": {
+      "status": "completed",
+      "score": 5.0,
+      "coverage": 10.0,
+      "criterion_status_counts": {
+        "unknown": 10,
+        "partial": 2
+      }
+    },
+    "fresh_live_seconds": 93.938,
+    "fresh_live_error": null
+  },
+  "week5_uncommitted_at_test_time": true,
+  "handoff_tag": "week-5"
+}

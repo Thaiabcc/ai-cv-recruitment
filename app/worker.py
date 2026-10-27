@@ -79,9 +79,13 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--once', action='store_true')
     args = parser.parse_args()
+    from app.evaluation_worker import process_evaluation_once
     try:
         while True:
-            worked = process_once()
+            # Each iteration services both queues; evaluation progress is persisted per job.
+            searched = process_once()
+            evaluated = process_evaluation_once()
+            worked = searched or evaluated
             if args.once: break
             if not worked: time.sleep(3)
     except KeyboardInterrupt:

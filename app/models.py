@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, Integer, JSON, LargeBinary, String, Text, UniqueConstraint, func
-from sqlalchemy.dialects.mysql import BIGINT, MEDIUMBLOB
+from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, Integer, JSON, LargeBinary, Numeric, String, Text, UniqueConstraint, func
+from sqlalchemy.dialects.mysql import BIGINT, MEDIUMBLOB, TIMESTAMP
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -103,3 +103,40 @@ class SearchRunJob(Base):
     search_run_id: Mapped[int] = mapped_column(ID, ForeignKey('search_runs.id'), primary_key=True)
     job_id: Mapped[int] = mapped_column(ID, ForeignKey('jobs.id'), primary_key=True)
     snapshot: Mapped[dict] = mapped_column(JSON)
+
+
+class EvaluationBatch(Base):
+    __tablename__ = 'evaluation_batches'
+    id: Mapped[int] = mapped_column(ID, primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(ID, ForeignKey('users.id'), index=True)
+    search_run_id: Mapped[int] = mapped_column(ID, ForeignKey('search_runs.id'), index=True)
+    status: Mapped[str] = mapped_column(String(20), default='queued', index=True)
+    model: Mapped[str] = mapped_column(String(200))
+    rubric_version: Mapped[str] = mapped_column(String(50))
+    total_jobs: Mapped[int] = mapped_column(Integer)
+    worker_token: Mapped[str | None] = mapped_column(String(36))
+    created_at: Mapped[datetime] = mapped_column(DateTime().with_variant(TIMESTAMP(), 'mysql'), server_default=func.now())
+    started_at: Mapped[datetime | None] = mapped_column(DateTime)
+    heartbeat_at: Mapped[datetime | None] = mapped_column(DateTime)
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+class Evaluation(Base):
+    __tablename__ = 'evaluations'
+    __table_args__ = (UniqueConstraint('batch_id', 'job_id', name='uq_evaluation_batch_job'),)
+    id: Mapped[int] = mapped_column(ID, primary_key=True, autoincrement=True)
+    batch_id: Mapped[int | None] = mapped_column(ID, ForeignKey('evaluation_batches.id'), index=True)
+    search_run_id: Mapped[int] = mapped_column(ID, ForeignKey('search_runs.id'))
+    job_id: Mapped[int] = mapped_column(ID, ForeignKey('jobs.id'))
+    status: Mapped[str] = mapped_column(String(20), default='pending')
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    score: Mapped[float | None] = mapped_column(Numeric(5, 2))
+    information_coverage: Mapped[float | None] = mapped_column(Numeric(5, 2))
+    rubric_version: Mapped[str] = mapped_column(String(50))
+    matched: Mapped[list] = mapped_column(JSON, default=list)
+    missing: Mapped[list] = mapped_column(JSON, default=list)
+    unknown_criteria: Mapped[list] = mapped_column(JSON, default=list)
+    explanation: Mapped[str] = mapped_column(Text, default='')
+    suggestions: Mapped[list] = mapped_column(JSON, default=list)
+    details: Mapped[dict | None] = mapped_column(JSON)
+    evaluated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())

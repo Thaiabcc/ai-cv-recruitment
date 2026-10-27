@@ -484,6 +484,7 @@ let searchTimer = null;
 let searchEpoch = 0;
 let searchCursor = null;
 function resetSearches() {
+  resetEvaluations();
   searchEpoch++; clearTimeout(searchTimer);
   $('search-section').hidden = true;
   $('search-history').replaceChildren(); $('search-jobs').replaceChildren();
@@ -534,6 +535,13 @@ async function watchSearch(id) {
   try {
     const run = await api(`/searches/${id}`);
     if (epoch !== searchEpoch) return;
+    if (evaluationSearchId !== run.id) {
+      resetEvaluations();
+      if (['completed', 'partial'].includes(run.status) && run.jobs.length) {
+        evaluationSearchId = run.id; $('evaluation-section').hidden = false;
+        loadEvaluationHistory().catch(error => { $('evaluation-status').textContent = error.message; });
+      }
+    }
     const labels = {queued: 'Đang chờ worker xử lý', running: 'Đang thu thập và lọc tin', completed: 'Hoàn thành', partial: 'Hoàn thành một phần', failed: 'Tìm việc thất bại'};
     const historyButton = document.querySelector(`#search-history button[data-run-id="${run.id}"]`);
     if (historyButton) historyButton.textContent = `Lượt #${run.id} · ${labels[run.status]} · ${cvDate(run.created_at)}`;
@@ -567,3 +575,135 @@ $('search-start').addEventListener('click', async () => {
 });
 $('search-refresh').addEventListener('click', () => loadSearches().catch(error => { $('search-status').textContent = error.message; }));
 $('search-more').addEventListener('click', () => searchHistory(true).catch(error => { $('search-status').textContent = error.message; }));
+
+let evaluationSearchId = null;
+let evaluationTimer = null;
+let evaluationEpoch = 0;
+let evaluationSelection = 0;
+let evaluationSelectedId = null;
+let evaluationCursor = null;
+let evaluationWorking = false;
+let evaluationActiveId = null;
+const evaluationLabels = {queued: 'Đang chờ worker', running: 'Ollama đang đối chiếu từng tin', completed: 'Hoàn thành', partial: 'Hoàn thành một phần', failed: 'Đánh giá thất bại', cancelled: 'Đã dừng'};
+const criterionLabels = {matched: 'Đáp ứng theo bằng chứng', partial: 'Đáp ứng một phần', unmet: 'Chưa đáp ứng theo bằng chứng', unknown: 'Chưa đủ thông tin'};
+const categoryLabels = {skills: 'Kỹ năng', experience: 'Kinh nghiệm', education: 'Học vấn'};
+function resetEvaluations() {
+  clearTimeout(evaluationTimer); evaluationEpoch++; evaluationSelection++;
+  evaluationSearchId = null; evaluationSelectedId = null; evaluationCursor = null; evaluationWorking = false; evaluationActiveId = null;
+  $('evaluation-section').hidden = true; $('evaluation-results').replaceChildren(); $('evaluation-history').replaceChildren();
+  $('evaluation-status').textContent = ''; $('evaluation-progress').value = 0;
+  $('evaluation-start').disabled = false; $('evaluation-cancel').hidden = true; $('evaluation-more').hidden = true;
+}
+async function loadEvaluationHistory(append = false) {
+  const epoch = evaluationEpoch;
+  if (!evaluationSearchId) return;
+  const response = await api(`/searches/${evaluationSearchId}/evaluations` + (append && evaluationCursor ? `?before_id=${evaluationCursor}` : ''));
+  if (epoch !== evaluationEpoch) return;
+  if (!append) $('evaluation-history').replaceChildren();
+  evaluationCursor = response.next_before_id; $('evaluation-more').hidden = !evaluationCursor;
+  for (const batch of response.items) {
+    const button = document.createElement('button'); button.type = 'button'; button.className = 'text-button'; button.dataset.batchId = batch.id;
+    button.textContent = `Đánh giá #${batch.id} · ${evaluationLabels[batch.status]} · ${cvDate(batch.created_at)}`;
+    button.addEventListener('click', () => watchEvaluation(batch.id)); $('evaluation-history').append(button);
+  }
+  const active = response.items.find(b => ['queued', 'running'].includes(b.status));
+  evaluationActiveId = active?.id || null;
+  $('evaluation-start').disabled = Boolean(evaluationActiveId);
+  if (!append && response.items.length) await watchEvaluation((active || response.items[0]).id);
+  else if (!response.items.length) $('evaluation-status').textContent = 'Chưa có lượt đánh giá. Kết quả mới sẽ được lưu riêng, giữ nguyên các lượt trước.';
+}
+function evaluationText(parent, tag, text, className = '') {
+  const element = document.createElement(tag); element.textContent = text;
+  if (className) element.className = className;
+  parent.append(element); return element;
+}
+function renderEvaluations(batch) {
+  const opened = new Set([...document.querySelectorAll('#evaluation-results .evaluation-card details[open]')].map(el => `${el.closest('.evaluation-card').dataset.resultId}:${el.dataset.detailKey}`));
+  $('evaluation-results').replaceChildren();
+  let rank = 0;
+  for (const result of batch.results) {
+    const card = document.createElement('article'); card.className = 'evaluation-card'; card.dataset.resultId = result.id;
+    const hasScore = result.score !== null && result.status === 'completed';
+    const badge = hasScore ? `#${++rank} · ${result.score}/100 theo bằng chứng` : ({pending: 'Chờ đánh giá', running: 'Đang đánh giá', insufficient: 'Chưa đủ thông tin để tính điểm', failed: 'Chưa đánh giá được', cancelled: 'Chưa đánh giá · đã dừng'}[result.status] || result.status);
+    evaluationText(card, 'span', badge, hasScore ? 'evaluation-badge' : 'evaluation-badge neutral');
+    evaluationText(card, 'h3', result.job?.title || 'Tin tuyển dụng');
+    evaluationText(card, 'p', `${result.job?.company || ''} · ${result.job?.location || ''}`, 'evaluation-company');
+    if (result.information_coverage !== null) evaluationText(card, 'p', `Yêu cầu có thông tin đối chiếu: ${result.information_coverage}%. Phần chưa rõ không được cộng điểm.`, 'field-hint');
+    if (result.explanation) evaluationText(card, 'p', result.explanation);
+    if (result.details?.breakdown?.length) {
+      const table = document.createElement('table'); table.className = 'evaluation-breakdown';
+      const header = document.createElement('tr');
+      for (const title of ['Nhóm yêu cầu', 'Trọng số', 'Điểm nhóm', 'Có thông tin']) evaluationText(header, 'th', title);
+      table.append(header);
+      for (const group of result.details.breakdown) {
+        const row = document.createElement('tr');
+        for (const value of [group.label, `${group.weight}%`, group.score === null ? 'Chưa đủ thông tin' : `${group.score}/100`, `${group.coverage}%`]) evaluationText(row, 'td', value);
+        table.append(row);
+      }
+      card.append(table);
+    }
+    for (const [criterionIndex, criterion] of (result.details?.criteria || []).entries()) {
+      const details = document.createElement('details'); details.className = `criterion criterion-${criterion.status}`;
+      details.dataset.detailKey = `criterion-${criterionIndex}`; details.open = opened.has(`${result.id}:${details.dataset.detailKey}`);
+      evaluationText(details, 'summary', `${categoryLabels[criterion.category]} · ${criterionLabels[criterion.status]}`);
+      evaluationText(details, 'p', 'Yêu cầu trong tin:'); evaluationText(details, 'blockquote', criterion.requirement_quote);
+      if (criterion.candidate_quote) {
+        const [source, field] = criterion.evidence_field.split('.');
+        evaluationText(details, 'p', `Bằng chứng từ ${source === 'profile' ? 'hồ sơ' : 'CV'} · ${categoryLabels[field] || 'Dự án'}:`);
+        evaluationText(details, 'blockquote', criterion.candidate_quote);
+      } else evaluationText(details, 'p', 'Chưa tìm được trích dẫn hợp lệ trong dữ liệu đã lưu.');
+      card.append(details);
+    }
+    if (result.suggestions.length) {
+      const details = document.createElement('details'); details.dataset.detailKey = 'suggestions'; details.open = opened.has(`${result.id}:suggestions`); evaluationText(details, 'summary', 'Gợi ý cải thiện hồ sơ');
+      const list = document.createElement('ul');
+      for (const suggestion of result.suggestions) evaluationText(list, 'li', suggestion);
+      details.append(list); card.append(details);
+    }
+    if (result.job?.url) {
+      const link = evaluationText(card, 'a', `Xem tin gốc · ${result.job.source || 'Nguồn tuyển dụng'}`);
+      link.href = result.job.url; link.target = '_blank'; link.rel = 'noopener noreferrer';
+    }
+    $('evaluation-results').append(card);
+  }
+}
+async function watchEvaluation(id, select = true) {
+  clearTimeout(evaluationTimer);
+  if (select) { evaluationSelection++; evaluationSelectedId = id; }
+  const epoch = evaluationEpoch, selection = evaluationSelection;
+  try {
+    const batch = await api(`/evaluations/${id}`);
+    if (epoch !== evaluationEpoch || selection !== evaluationSelection) return;
+    const active = ['queued', 'running'].includes(batch.status);
+    if (active) evaluationActiveId = batch.id;
+    else if (evaluationActiveId === batch.id) evaluationActiveId = null;
+    $('evaluation-start').disabled = Boolean(evaluationActiveId) || evaluationWorking;
+    $('evaluation-cancel').hidden = !active;
+    $('evaluation-progress').max = Math.max(1, batch.total_jobs); $('evaluation-progress').value = batch.processed_jobs;
+    $('evaluation-status').textContent = `${evaluationLabels[batch.status]} · ${batch.processed_jobs}/${batch.total_jobs} tin đã kết thúc xử lý · ${batch.counts.completed || 0} có điểm · ${batch.counts.insufficient || 0} thiếu thông tin · ${batch.counts.failed || 0} lỗi · ${batch.model} · ${batch.rubric_version}`;
+    const history = document.querySelector(`#evaluation-history button[data-batch-id="${batch.id}"]`);
+    if (history) history.textContent = `Đánh giá #${batch.id} · ${evaluationLabels[batch.status]} · ${cvDate(batch.created_at)}`;
+    renderEvaluations(batch);
+    if (active) evaluationTimer = setTimeout(() => watchEvaluation(id, false), 3000);
+  } catch (error) { if (epoch === evaluationEpoch && selection === evaluationSelection) $('evaluation-status').textContent = error.message; }
+}
+$('evaluation-start').addEventListener('click', async () => {
+  if (!evaluationSearchId || evaluationWorking) return;
+  const epoch = evaluationEpoch; evaluationWorking = true; $('evaluation-start').disabled = true;
+  try {
+    const batch = await api(`/searches/${evaluationSearchId}/evaluations`, {method: 'POST'});
+    if (epoch !== evaluationEpoch) return;
+    await loadEvaluationHistory(); await watchEvaluation(batch.id);
+  } catch (error) { if (epoch === evaluationEpoch) $('evaluation-status').textContent = error.message; }
+  finally { if (epoch === evaluationEpoch) { evaluationWorking = false; if (evaluationActiveId) $('evaluation-start').disabled = true; else $('evaluation-start').disabled = false; } }
+});
+$('evaluation-cancel').addEventListener('click', async () => {
+  if (!evaluationSelectedId) return;
+  const epoch = evaluationEpoch; const id = evaluationSelectedId;
+  $('evaluation-cancel').disabled = true;
+  try { await api(`/evaluations/${id}/cancel`, {method: 'POST'}); if (epoch === evaluationEpoch) await watchEvaluation(id); }
+  catch (error) { if (epoch === evaluationEpoch) $('evaluation-status').textContent = error.message; }
+  finally { $('evaluation-cancel').disabled = false; }
+});
+$('evaluation-refresh').addEventListener('click', () => loadEvaluationHistory().catch(error => { $('evaluation-status').textContent = error.message; }));
+$('evaluation-more').addEventListener('click', () => loadEvaluationHistory(true).catch(error => { $('evaluation-status').textContent = error.message; }));

@@ -12,7 +12,8 @@ database_url = URL.create(
     database=settings.db_name,
     query={"charset": "utf8mb4"},
 )
-engine = create_engine(database_url, pool_pre_ping=True)
+engine = create_engine(database_url, pool_pre_ping=True,
+                       connect_args={'init_command': "SET time_zone = '+00:00'"})
 SessionLocal = sessionmaker(bind=engine)
 
 
