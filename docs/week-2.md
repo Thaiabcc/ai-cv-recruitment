@@ -22,7 +22,7 @@ Ngày 17/10/2026: **7/7 ca qua trên SQLite và 7/7 ca qua trên MySQL 8.4.9**.
 6. Phiên hết hạn hoặc mã phiên giả trả 401.
 7. Tên trống hoặc dữ liệu quá dài trả 422; response hồ sơ không lưu cache.
 
-Kiểm thử MySQL dùng rollback giao dịch, không để lại dữ liệu thử. Kiểm tra cú pháp JavaScript và biên dịch Python đã qua. Đã kiểm thử trên trình duyệt: đăng ký, lưu hồ sơ, tải lại trang, đăng xuất và đăng nhập lại; hồ sơ được khôi phục đúng từ MySQL. Ảnh minh chứng: `week-2-profile.png`. Các bước bên dưới dùng để người dùng nghiệm thu bổ sung.
+Kiểm thử MySQL dùng rollback giao dịch, không để lại dữ liệu thử. Kiểm tra cú pháp JavaScript và biên dịch Python đã qua. Đã kiểm thử trên trình duyệt: đăng ký, lưu hồ sơ, tải lại trang, đăng xuất và đăng nhập lại; hồ sơ được khôi phục đúng từ MySQL. Ảnh minh chứng: `week-2-profile.png`. Các bước kiểm tra thủ công được trình bày trong phần tiếp theo.
 
 ## Nghiệm thu giao diện
 
@@ -34,16 +34,16 @@ Kiểm thử MySQL dùng rollback giao dịch, không để lại dữ liệu th
 
 ## Phạm vi còn lại
 
-Chưa có quên mật khẩu, xác minh email, giới hạn thử đăng nhập hoặc quản trị tài khoản. Chưa có AI, CV thật, nguồn tuyển dụng thật và lịch sử đánh giá. Các phần này không được giả lập thành kết quả thật trên giao diện.
+Giai đoạn này tập trung vào tài khoản và hồ sơ; xác minh email, khôi phục mật khẩu và giới hạn thử đăng nhập chưa nằm trong phạm vi triển khai. Chức năng CV, tìm việc và đánh giá được trình bày trong tài liệu các giai đoạn tiếp theo.
 
-## Bàn giao tuần 2
+## Kết quả triển khai
 
-Người dùng đã nghiệm thu chức năng và giao diện ngày 17/10/2026. Bản bàn giao được đánh dấu bằng tag `week-2`.
+Chức năng tài khoản và hồ sơ được lưu tại mốc phiên bản `week-2`.
 
-Giao diện chia hồ sơ thành bốn nhóm, có điều hướng nhanh, tiến độ điền, trạng thái chưa lưu và nút hiện/ẩn mật khẩu. Phối màu xanh rừng, ngà ấm và vàng đồng. Ảnh giao diện hiện tại:
+Giao diện chia hồ sơ thành bốn nhóm, có điều hướng nhanh, tiến độ điền, trạng thái chưa lưu và nút hiện/ẩn mật khẩu. Phối màu xanh rừng, ngà ấm và vàng đồng. Minh họa giao diện:
 
 ![Trang đăng nhập](interface-login.png)
 
 ![Trang hồ sơ](interface-profile.png)
 
-Ứng dụng dùng MySQL để lưu dữ liệu thật. SQLite chỉ dùng trong bộ kiểm thử độc lập, không phải database chạy ứng dụng. Server kiểm thử đã được dừng sau kiểm tra.
+Ứng dụng dùng MySQL để lưu dữ liệu thật. SQLite chỉ dùng trong bộ kiểm thử độc lập, không phải database chạy ứng dụng.

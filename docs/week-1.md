@@ -4,7 +4,7 @@
 
 Xây dựng hệ thống AI hỗ trợ tạo lập hồ sơ ứng viên, tự động tìm kiếm và đánh giá mức độ phù hợp với các vị trí tuyển dụng. Thời gian: 8 tuần. Hoàn thành các chức năng trong tuần 5; tuần 6 kiểm thử và tối ưu; tuần 7 hoàn thiện báo cáo đồ án và poster; tuần 8 kiểm tra đạo văn, chỉnh sửa và chuẩn bị slide, demo bảo vệ. Kế hoạch chi tiết được cập nhật trong README.md.
 
-## Phạm vi đã chốt
+## Phạm vi chức năng
 
 Người dùng đăng ký/đăng nhập, nhập học vấn, kỹ năng, kinh nghiệm, dự án và mong muốn về vị trí, địa điểm, lương. Hệ thống hỗ trợ tạo CV, tự tìm tin từ danh sách nguồn tuyển dụng cấu hình sẵn, đọc yêu cầu, đối chiếu và xếp hạng. Người dùng không phải nhập link hoặc mô tả công việc.
 
@@ -65,7 +65,7 @@ Quan hệ: users 1–1 profiles; users 1–N cvs/search_runs; recruitment_source
 
 ## Tiêu chí nghiệm thu tuần 1
 
-- Chốt luồng, chức năng tài khoản và dữ liệu cần lưu.
+- Xác định luồng nghiệp vụ, chức năng tài khoản và dữ liệu cần lưu.
 - Có thiết kế cơ sở dữ liệu, kiến trúc và kế hoạch 8 tuần.
 - Giao diện chạy được, có form hồ sơ và kết quả minh họa sắp xếp giảm dần.
 - API health và demo hoạt động; giao diện thể hiện rõ giới hạn demo.

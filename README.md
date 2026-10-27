@@ -1,23 +1,37 @@
 # AI CV Recruitment
 
-Hệ thống AI hỗ trợ tạo hồ sơ ứng viên, tìm kiếm và đánh giá mức độ phù hợp với vị trí tuyển dụng. Đồ án triển khai theo kế hoạch 8 tuần.
+Đồ án xây dựng hệ thống hỗ trợ ứng viên quản lý hồ sơ, tạo CV và tìm kiếm công việc. Hệ thống sử dụng mô hình ngôn ngữ chạy cục bộ để đối chiếu yêu cầu tuyển dụng với bằng chứng trong hồ sơ, giải thích kết quả và sắp xếp danh sách công việc.
 
-**Tuần 5 đã chốt bàn giao ngày 28/10/2026 — tag `week-5`. Bước tiếp theo: tuần 6, kiểm thử tích hợp, đo chất lượng AI và tối ưu.**
+## Chức năng
 
-## Đã triển khai
+- Đăng ký, đăng nhập, đăng xuất; băm mật khẩu bằng Argon2 và quản lý phiên đăng nhập.
+- Quản lý thông tin cá nhân, học vấn, kỹ năng, kinh nghiệm, dự án và nguyện vọng trên MySQL.
+- Tạo, chỉnh sửa và lưu phiên bản CV; chọn mẫu trình bày và ảnh chân dung.
+- Xem trước và xuất CV dạng PDF A4; hỗ trợ thêm DOCX để chỉnh sửa.
+- Tìm tin từ CareerViet, TopDev và Arbeitnow; chuẩn hóa, loại trùng, lọc theo từ khóa và địa điểm.
+- Đánh giá theo kỹ năng, kinh nghiệm, học vấn; trình bày trích dẫn, thông tin còn thiếu và gợi ý cải thiện hồ sơ.
+- Xử lý tác vụ bằng worker, theo dõi tiến độ và lưu lịch sử riêng theo tài khoản.
 
-- Tuần 1: phân tích yêu cầu, kiến trúc, thiết kế database, khung FastAPI và giao diện minh họa.
-- Tuần 2: đăng ký, đăng nhập, đăng xuất; băm mật khẩu Argon2; phiên đăng nhập trong database; nhập, xem, chỉnh sửa và lưu hồ sơ cá nhân.
-- Hồ sơ gồm họ tên, điện thoại, địa chỉ, học vấn, kỹ năng, kinh nghiệm, dự án và nguyện vọng nghề nghiệp.
-- Mỗi tài khoản chỉ truy cập hồ sơ của chính mình; tải lại trang hoặc đăng nhập lại vẫn đọc được dữ liệu đã lưu.
+Luồng sử dụng: **Tài khoản → Hồ sơ → CV → Tìm việc → Đánh giá → Xếp hạng và lịch sử**.
 
-Đã có tạo/sửa CV bằng **Ollama local (`qwen2.5:7b`, ngữ cảnh 8192 token)**, lưu phiên bản, bốn mẫu PDF và xuất DOCX. Gemini giữ như lựa chọn chủ động qua cấu hình, không tự fallback lên cloud. PDF là đầu ra chính đã kiểm tra bố cục; DOCX là đầu ra bổ sung có thể chỉnh sửa.
+## Công nghệ và kiến trúc
 
-Tuần 4 đã có **CareerViet và TopDev cho việc làm Việt Nam**, thêm Arbeitnow cho Đức/quốc tế; chuẩn hóa/loại trùng, lọc từ khóa và địa điểm, hàng đợi MySQL, worker và kết quả/lịch sử riêng từng tài khoản. Mặc định chọn hai nguồn Việt Nam; mỗi nguồn Việt Nam đọc tối đa 2 từ khóa, 6 tin chi tiết mỗi lượt. **Chưa lọc lương**. Tuần 5 bổ sung đánh giá/xếp hạng riêng bằng Ollama sau khi chọn lượt tìm đã hoàn thành. Phần minh họa cũ vẫn được gắn nhãn dữ liệu mẫu.
+| Thành phần | Công nghệ |
+| --- | --- |
+| Backend | Python, FastAPI, SQLAlchemy |
+| Cơ sở dữ liệu | MySQL |
+| Giao diện | HTML, CSS, JavaScript |
+| Mô hình ngôn ngữ | Ollama, mặc định `qwen2.5:7b` |
+| Xuất tài liệu | ReportLab, python-docx, PyMuPDF |
+| Kiểm thử | unittest, FastAPI TestClient, MySQL và SQLite trong bộ nhớ |
 
-## Cài đặt và chạy trên Windows
+Giao diện giao tiếp với FastAPI qua API sử dụng cookie phiên. Backend lưu hồ sơ, phiên bản CV, lượt tìm và kết quả đánh giá trong MySQL. Worker lấy tác vụ từ hàng đợi database, gọi nguồn tuyển dụng hoặc Ollama và lưu kết quả.
 
-Python 3.10 trở lên, MySQL 8.0.16 trở lên (đã kiểm thử với MySQL 8.4.9).
+## Cài đặt
+
+Yêu cầu: Python 3.10 trở lên, MySQL 8.0.16 trở lên và Ollama. Môi trường MySQL đã kiểm thử: phiên bản 8.4.9.
+
+### Thiết lập Python
 
 ```powershell
 python -m venv .venv
@@ -25,87 +39,28 @@ python -m venv .venv
 Copy-Item .env.example .env
 ```
 
-Điền thông tin kết nối MySQL trong `.env`. Không đưa mật khẩu, khóa API hoặc hồ sơ thực tế lên Git.
+Cấu hình kết nối MySQL trong `.env`. File này không được quản lý bằng Git; thông tin đăng nhập, khóa API và dữ liệu ứng viên không được đưa vào repository.
 
-Với database mới, mở MySQL Workbench và chạy lần lượt:
+### Khởi tạo cơ sở dữ liệu
 
-1. `database/schema.sql` — tạo database và 7 bảng nghiệp vụ, chỉ chạy trên database phát triển mới.
-2. `database/week-2.sql` — thêm bảng phiên đăng nhập; có thể chạy lại, giữ dữ liệu hiện có.
-3. `database/week-3-photos.sql` — thêm bảng lưu ảnh chân dung trong MySQL.
-4. `database/week-4.sql` — bổ sung hàng đợi, liên kết tin theo lượt và bật nguồn Arbeitnow; chạy một lần.
-5. `database/week-4-vietnam.sql` — thêm CareerViet/TopDev; có thể chạy lại, giữ trạng thái bật/tắt nguồn đã có.
-6. `database/week-5.sql` — thêm lượt đánh giá, tiến độ và lịch sử nhiều phiên bản; chạy một lần sau tuần 4.
+Với database mới, chạy các tập lệnh trong MySQL Workbench theo thứ tự:
 
-Nếu đã có database, chỉ chạy các migration còn thiếu theo thứ tự trên; bỏ qua migration đã áp dụng. Ứng dụng không tự chạy migration.
+1. `database/schema.sql` — cấu trúc dữ liệu ban đầu.
+2. `database/week-2.sql` — phiên đăng nhập.
+3. `database/week-3-photos.sql` — ảnh chân dung.
+4. `database/week-4.sql` — hàng đợi tìm việc và liên kết kết quả.
+5. `database/week-4-vietnam.sql` — nguồn tuyển dụng Việt Nam.
+6. `database/week-5.sql` — lượt đánh giá và lịch sử kết quả.
 
-```powershell
-.\run.bat
-```
+Với database đã tồn tại, chỉ chạy các migration còn thiếu theo đúng thứ tự. Ứng dụng không tự động áp dụng migration. Khi chuyển môi trường, cần chuyển dữ liệu MySQL riêng nếu muốn giữ tài khoản và hồ sơ hiện có.
 
-- Giao diện: http://127.0.0.1:8001
-- Tài liệu API: http://127.0.0.1:8001/docs
-- Kiểm tra ứng dụng: http://127.0.0.1:8001/api/health (không xác nhận kết nối database).
-
-Đăng ký bằng email và mật khẩu 8–128 ký tự; đăng ký thành công sẽ tự đăng nhập. Điền hồ sơ rồi chọn **Lưu hồ sơ**. Khi chạy qua HTTPS, cấu hình `COOKIE_SECURE=true`. Mặc định dùng HTTP cho localhost, thời hạn phiên `SESSION_HOURS=24`.
-
-## API tuần 2
-
-| Phương thức | Đường dẫn | Chức năng |
-| --- | --- | --- |
-| POST | `/api/auth/register` | Đăng ký và tạo phiên |
-| POST | `/api/auth/login` | Đăng nhập |
-| POST | `/api/auth/logout` | Xóa phiên ở server và cookie |
-| GET | `/api/auth/me` | Tài khoản đang đăng nhập |
-| GET | `/api/profile` | Hồ sơ của tài khoản hiện tại; `null` nếu chưa tạo |
-| PUT | `/api/profile` | Tạo hoặc thay thế toàn bộ hồ sơ hiện tại |
-
-Các yêu cầu thay đổi dữ liệu phải có header `X-Requested-With: cv-app`; Origin nếu có phải trùng nguồn. Khi thử API ngoài giao diện, cần giữ cookie giữa các yêu cầu và gửi header trên. API không cho truyền `user_id` để chọn chủ hồ sơ. Không bật CORS.
-
-## Kiểm thử
+### Cấu hình Ollama
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
-.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+ollama pull qwen2.5:7b
 ```
 
-Mặc định dùng SQLite trong bộ nhớ, không tác động database dự án. Kiểm thử tích hợp trên MySQL đã áp dụng migration:
-
-```powershell
-$env:TEST_MYSQL='1'
-.\.venv\Scripts\python.exe -m unittest discover -s tests -v
-Remove-Item Env:TEST_MYSQL
-```
-
-Bộ kiểm thử MySQL dùng kết nối trong một giao dịch ngoài, các yêu cầu dùng savepoint; rollback sau mỗi ca để không lưu tài khoản và hồ sơ thử nghiệm. Bao phủ xác thực, trùng email, dữ liệu không hợp lệ, băm mật khẩu, cookie, chống yêu cầu khác nguồn, hết hạn phiên, đăng xuất, lưu/chỉnh sửa và tách biệt hai tài khoản. Chi tiết tại [tài liệu tuần 2](docs/week-2.md).
-
-## Kế hoạch 8 tuần
-
-| Tuần | Nội dung | Tiến độ |
-| --- | --- | --- |
-| 1 | Phân tích, thiết kế, nguyên mẫu | Hoàn thành, tag `week-1` |
-| 2 | Tài khoản, phân quyền, lưu hồ sơ MySQL | Hoàn thành, đã nghiệm thu giao diện; tag `week-2` |
-| 3 | AI tạo/chỉnh sửa CV, lưu phiên bản, xuất PDF/DOCX | Hoàn thành luồng CV/PDF chính bằng Ollama local; DOCX là tùy chọn |
-| 4 | Khảo sát nguồn tuyển dụng, tìm/thu thập/chuẩn hóa dữ liệu, tác vụ nền | Hoàn thành phạm vi bàn giao: CareerViet/TopDev, Arbeitnow tùy chọn, worker, chọn nguồn và lịch sử; tag `week-4` |
-| 5 | Đánh giá, giải thích, xếp hạng và lịch sử; hoàn thiện chức năng | Hoàn thành phạm vi chức năng; 62/62 ca MySQL/SQLite qua, đã thử Ollama thật; tag `week-5` |
-| 6 | Kiểm thử tích hợp, đánh giá chất lượng và tối ưu | Chưa thực hiện |
-| 7 | Báo cáo và poster | Chưa thực hiện |
-| 8 | Kiểm tra đạo văn, chỉnh sửa, slide và demo bảo vệ | Chưa thực hiện |
-
-## Tài liệu và mã nguồn
-
-- [Thiết kế tuần 1](docs/week-1.md)
-- [Triển khai và kiểm thử tuần 2](docs/week-2.md)
-- [Triển khai, cấu hình Gemini và kiểm thử tuần 3](docs/week-3.md)
-- [Thiết kế database](database/schema.sql), [migration tuần 2](database/week-2.sql)
-- `app/accounts.py`: xác thực và hồ sơ; `app/models.py`: ánh xạ database.
-- `static/`: giao diện HTML/CSS/JavaScript; `tests/`: kiểm thử API.
-- [Repository](https://github.com/Thaiabcc/ai-cv-recruitment), [mốc tuần 1](https://github.com/Thaiabcc/ai-cv-recruitment/tree/week-1), [mốc tuần 2](https://github.com/Thaiabcc/ai-cv-recruitment/tree/week-2).
-
-Trước khi triển khai Internet cần bổ sung giới hạn thử đăng nhập ở ứng dụng/proxy, xác minh email và khôi phục mật khẩu; sử dụng tài khoản database có quyền giới hạn và HTTPS. Phiên bản hiện tại phục vụ phát triển và nghiệm thu đồ án trên localhost.
-
-## Ollama local và worker tìm việc
-
-Cài/mở Ollama, tải model nếu chưa có: `ollama pull qwen2.5:7b`. Trong `.env`:
+Ollama cần hoạt động trên máy chạy backend. Cấu hình mặc định trong `.env`:
 
 ```dotenv
 AI_PROVIDER=ollama
@@ -114,20 +69,98 @@ OLLAMA_MODEL=qwen2.5:7b
 OLLAMA_TIMEOUT_SECONDS=180
 ```
 
-Ứng dụng dùng `/api/chat`, JSON schema, `num_ctx=8192`, `num_predict=3072`. Nội dung quá dài được từ chối có thông báo, không tự cắt dữ kiện. Ollama cần đang chạy trên chính máy chạy backend; không cần API key. Đổi `.env` cần khởi động lại ứng dụng.
+Ứng dụng sử dụng ngữ cảnh 8192 token và đầu ra tối đa 3072 token. Nội dung vượt ngân sách được thông báo lỗi, không tự động cắt dữ kiện. Backend kiểm tra cấu trúc JSON trước khi lưu kết quả. Gemini là cấu hình tùy chọn cho chức năng CV; chức năng đánh giá hiện sử dụng Ollama local.
 
-Chạy `run.bat` cho web và **mở thêm `run-worker.bat`** cho tác vụ tìm việc. Worker không mở cổng HTTP. Dừng cả hai bằng Ctrl+C khi xong. Nếu chưa chạy worker, lượt tìm việc giữ trạng thái chờ; khởi động worker sẽ tiếp tục xử lý. Muốn xử lý một lượt rồi thoát: `run-worker.bat --once`.
+### Khởi động
 
-Đăng nhập → lưu hồ sơ → tạo CV → ở phần **Tìm việc từ CV của bạn**, chọn CV, tùy chọn từ khóa/địa điểm rồi tìm. Mặc định chọn CareerViet và TopDev; có thể bật thêm Arbeitnow. Để trống địa điểm để tìm toàn nguồn; hỗ trợ Hà Nội/Hanoi, TP.HCM/Hồ Chí Minh, Đà Nẵng/Da Nang. Nhập `remote` chỉ lọc cờ remote được nguồn xác nhận, không bảo đảm được làm từ Việt Nam. TopCV đang trả 403 khi lấy tin trực tiếp; VietnamWorks chưa có adapter đọc đủ nội dung. Hai nguồn này chưa được bật. **Làm mới lịch sử** cũng cập nhật danh sách 30 CV mới nhất để chọn.
+Chạy web và worker trong hai terminal:
 
-Chi tiết nguồn, giới hạn và kiểm thử: [tuần 4](docs/week-4.md). Database và `.env` vẫn phải chuyển riêng khi đổi máy.
+```powershell
+.\run.bat
+```
 
-## Đánh giá và xếp hạng tuần 5
+```powershell
+.\run-worker.bat
+```
 
-Mở lịch sử tìm việc, chọn lượt đã hoàn thành có tin → **Đánh giá & xếp hạng bằng Ollama**. Dùng cùng `run-worker.bat`; mỗi tin được xử lý và lưu tiến độ riêng. Có thể dừng, xem lại lịch sử hoặc tạo lượt đánh giá mới mà không sửa kết quả cũ.
+- Giao diện: <http://127.0.0.1:8001>
+- Tài liệu API: <http://127.0.0.1:8001/docs>
+- Trạng thái ứng dụng: <http://127.0.0.1:8001/api/health>
 
-Dữ liệu dùng là hồ sơ/CV đã lưu ở lượt tìm, không tự lấy hồ sơ vừa chỉnh sau đó. Kỹ năng 50%, kinh nghiệm 30%, học vấn 20%; nhóm không có yêu cầu được bỏ và chuẩn hóa lại trọng số. Đầu ra nêu trích dẫn yêu cầu, bằng chứng, phần đáp ứng/một phần/chưa đủ thông tin và gợi ý. Điểm phản ánh bằng chứng, không phải xác suất trúng tuyển. AI trích xuất có thể sai; cần xem trích dẫn và tin gốc.
+Worker xử lý cả tìm việc và đánh giá; tác vụ giữ trạng thái chờ nếu worker chưa hoạt động. Dùng `Ctrl+C` để dừng. Sau khi cập nhật code hoặc cấu hình, cần khởi động lại web và worker.
 
-Xem [cách tính, API, kiểm thử và giới hạn tuần 5](docs/week-5.md). Nếu cập nhật từ tag week-4, áp dụng migration tuần 5 và khởi động lại web cùng worker; không chạy lại migration tuần 4 đã áp dụng.
+## Sử dụng
 
-Báo cáo kiểm thử tuần 5: [kết quả và lỗi trước/sau sửa](docs/week-5-test-report.md).
+1. Đăng ký hoặc đăng nhập, nhập và lưu hồ sơ.
+2. Tạo bản nháp hoặc sử dụng AI biên soạn CV; kiểm tra nội dung, chọn mẫu và lưu phiên bản.
+3. Xuất PDF từ phiên bản đã lưu.
+4. Chọn CV, nguồn tuyển dụng và bộ lọc để tìm việc. CareerViet và TopDev được ưu tiên mặc định.
+5. Mở lượt tìm đã hoàn thành, chọn **Đánh giá & xếp hạng bằng Ollama**.
+6. Xem điểm, trích dẫn, bằng chứng và thông tin còn thiếu; truy cập tin gốc hoặc mở lại lịch sử.
+
+Đánh giá sử dụng hồ sơ/CV được lưu tại thời điểm tạo lượt tìm. Mỗi lượt đánh giá mới được lưu riêng để bảo toàn kết quả trước đó.
+
+## Phương pháp đánh giá và giới hạn
+
+Trọng số ban đầu: kỹ năng 50%, kinh nghiệm 30%, học vấn 20%. Nhóm không có yêu cầu được bỏ và phân bổ lại trọng số. Tiêu chí được phân loại thành đáp ứng, đáp ứng một phần, chưa đáp ứng có bằng chứng hoặc chưa đủ thông tin. Backend kiểm tra trích dẫn và tính điểm; AI không trực tiếp quyết định điểm số.
+
+Điểm phản ánh bằng chứng trong dữ liệu đã cung cấp, không phải xác suất trúng tuyển. Trích dẫn đúng vị trí chưa bảo đảm AI hiểu đúng ngữ nghĩa. Rubric cần tiếp tục được hiệu chỉnh trên tập mẫu có người chấm.
+
+- Mỗi nguồn Việt Nam hiện xử lý tối đa hai từ khóa và sáu tin chi tiết mỗi lượt. Chưa tích hợp TopCV/VietnamWorks và chưa lọc mức lương.
+- Tối đa 12 tiêu chí đánh giá mỗi tin; chưa hỗ trợ chia đoạn cho nội dung vượt ngân sách ngữ cảnh.
+- Worker đánh giá tuần tự trong một lượt; chưa đánh giá tải lớn hoặc chất lượng trên tập dữ liệu quy mô lớn.
+- PDF là đầu ra CV chính. DOCX là định dạng bổ sung; bố cục có thể khác PDF và phụ thuộc phần mềm mở tài liệu.
+
+## Kiểm thử
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+```
+
+Mặc định sử dụng SQLite trong bộ nhớ cho kiểm thử độc lập. Kiểm thử tích hợp trên MySQL yêu cầu database đã áp dụng các migration:
+
+```powershell
+$env:TEST_MYSQL='1'
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+Remove-Item Env:TEST_MYSQL
+```
+
+Kết quả kiểm thử tuần 5: **62/62 ca trên MySQL và 62/62 ca trên SQLite**, bao gồm 22 ca trực tiếp cho chức năng đánh giá và 40 ca hồi quy. Các kiểm thử MySQL sử dụng giao dịch/savepoint và rollback dữ liệu thử nghiệm. Kết quả này xác nhận các tình huống chức năng đã kiểm tra, không đại diện cho độ chính xác tổng quát của AI.
+
+Chi tiết: [báo cáo kiểm thử](docs/week-5-test-report.md), [số liệu từng ca](docs/week-5-test-results.json).
+
+## Cấu trúc mã nguồn
+
+| Thư mục hoặc module | Nội dung |
+| --- | --- |
+| `app/accounts.py`, `app/models.py` | Tài khoản, hồ sơ và ánh xạ dữ liệu |
+| `app/cvs.py`, `app/cv_export.py`, `app/cv_templates.py` | Phiên bản CV, xem trước và xuất tài liệu |
+| `app/ai.py`, `app/gemini.py` | Tích hợp mô hình cho chức năng CV |
+| `app/searches.py`, `app/job_sources.py`, `app/vietnam_sources.py` | Tìm kiếm và chuẩn hóa tin |
+| `app/evaluations.py`, `app/evaluation_ai.py`, `app/evaluation_worker.py` | Đánh giá bằng chứng, điểm và lịch sử |
+| `app/worker.py` | Tiến trình xử lý tác vụ nền |
+| `database/`, `static/`, `tests/`, `docs/` | Migration, giao diện, kiểm thử và tài liệu |
+
+## Kế hoạch thực hiện
+
+| Tuần | Nội dung | Trạng thái |
+| --- | --- | --- |
+| 1 | Phân tích yêu cầu, thiết kế, nguyên mẫu | Đã thực hiện |
+| 2 | Tài khoản, phân quyền, hồ sơ MySQL | Đã triển khai và kiểm thử |
+| 3 | Tạo/chỉnh sửa CV, lưu phiên bản, xuất tài liệu | Đã triển khai và kiểm thử luồng PDF chính |
+| 4 | Thu thập, chuẩn hóa tin tuyển dụng và tác vụ nền | Đã triển khai trong phạm vi nguồn và giới hạn nêu trên |
+| 5 | Đánh giá, giải thích, xếp hạng và lịch sử | Đã triển khai và kiểm thử chức năng |
+| 6 | Kiểm thử tích hợp, đo chất lượng và tối ưu | Kế hoạch tiếp theo |
+| 7 | Báo cáo và poster | Kế hoạch |
+| 8 | Rà soát báo cáo, chuẩn bị slide và trình diễn | Kế hoạch |
+
+## Tài liệu kỹ thuật
+
+- [Phân tích và thiết kế](docs/week-1.md)
+- [Tài khoản và hồ sơ](docs/week-2.md)
+- [CV và xuất tài liệu](docs/week-3.md)
+- [Nguồn tuyển dụng và tìm việc](docs/week-4.md)
+- [Đánh giá và xếp hạng](docs/week-5.md)
+
+Phiên bản hiện tại phục vụ phát triển và đánh giá đồ án trên localhost. Triển khai công khai cần bổ sung HTTPS, tài khoản database có quyền giới hạn, giới hạn thử đăng nhập, xác minh email và khôi phục mật khẩu.

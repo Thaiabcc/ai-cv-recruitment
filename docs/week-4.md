@@ -1,6 +1,6 @@
 # Tuần 4 — Ollama local và tìm việc Việt Nam
 
-**Đã chốt bàn giao ngày 27/10/2026, tag `week-4`.** Phạm vi nghiệm thu là tìm tin thật qua CareerViet/TopDev, nguồn quốc tế tùy chọn, chuẩn hóa/lưu MySQL, worker, tiến độ và lịch sử riêng tư. Giới hạn thu thập nêu bên dưới là giới hạn của bản bàn giao, không phải cam kết quét toàn bộ tin trên các website.
+Giai đoạn này triển khai tìm tin qua CareerViet/TopDev, nguồn quốc tế tùy chọn, chuẩn hóa và lưu dữ liệu MySQL, xử lý nền và lịch sử riêng theo tài khoản.
 
 ## Tiến độ hiện tại
 
@@ -10,6 +10,8 @@ Ollama là mặc định: `qwen2.5:7b`, `num_ctx=8192`, `num_predict=3072`, temp
 
 ## Khảo sát nguồn phổ biến ở Việt Nam
 
+Thời điểm khảo sát: 27/10/2026.
+
 | Nguồn | Kết quả kiểm tra trực tiếp | Tích hợp |
 | --- | --- | --- |
 | CareerViet | Trang tìm kiếm và tin chi tiết trả 200; có JobPosting JSON-LD chứa nội dung, công ty, địa điểm, lương và hạn tuyển | Đã bật adapter HTML công khai |
@@ -17,7 +19,7 @@ Ollama là mặc định: `qwen2.5:7b`, `num_ctx=8192`, `num_predict=3072`, temp
 | TopCV | Trang công khai có trong công cụ tìm kiếm; HTTP trực tiếp từ máy trả 403 | Chưa bật; không vượt chặn, không tuyên bố đã tích hợp |
 | VietnamWorks | `/python-kw` trả 200 nhưng HTML/Next data kiểm tra chưa có danh sách tin đủ nội dung | Chưa bật adapter; còn xác minh đường lấy tin công khai ổn định |
 | JobsGO | Trang tìm Python trả 403; điều khoản có giới hạn thu thập tự động | Không chọn làm nguồn mặc định |
-| ITJobs | Swagger công khai nhưng endpoint Jobs trả 401; trang HTML đọc được | Không ưu tiên vì đã chọn các nguồn phổ biến hơn theo yêu cầu người dùng |
+| ITJobs | Swagger công khai nhưng endpoint Jobs trả 401; trang HTML đọc được | Nguồn khảo sát bổ sung, chưa tích hợp |
 | Arbeitnow | Feed JSON công khai trả 100 tin; chủ yếu Đức/quốc tế | Giữ làm nguồn tùy chọn, không tự chọn khi đã có nguồn Việt Nam |
 
 Tham chiếu chính thức: [CareerViet Python](https://careerviet.vn/viec-lam/python-k-vi.html), [CareerViet robots](https://careerviet.vn/robots.txt), [TopDev tìm Python](https://topdev.vn/jobs/search?keyword=python), [TopDev robots](https://topdev.vn/robots.txt), [TopDev thỏa thuận](https://topdev.vn/term-of-services), [TopCV](https://www.topcv.vn/tim-viec-lam-python), [VietnamWorks](https://www.vietnamworks.com/python-kw), [Ollama Chat API](https://docs.ollama.com/api/chat), [Arbeitnow API](https://www.arbeitnow.com/api/job-board-api).
@@ -43,9 +45,9 @@ Worker claim lượt bằng `FOR UPDATE SKIP LOCKED`, xử lý ngoài yêu cầu
 
 ## Cài đặt và chạy
 
-Với database mới: schema.sql → week-2.sql → week-3-photos.sql → week-4.sql → **week-4-vietnam.sql**. Migration Việt Nam có thể chạy lại, giữ trạng thái bật/tắt nguồn đã tồn tại. Trên máy hiện tại đã thêm CareerViet/TopDev và giữ dữ liệu ứng viên cũ.
+Với database mới: schema.sql → week-2.sql → week-3-photos.sql → week-4.sql → **week-4-vietnam.sql**. Migration Việt Nam có thể chạy lại, giữ trạng thái bật/tắt nguồn đã tồn tại.
 
-Mở Ollama với model `qwen2.5:7b`. `.env`: AI_PROVIDER=ollama, OLLAMA_BASE_URL=http://127.0.0.1:11434, OLLAMA_MODEL=qwen2.5:7b, OLLAMA_TIMEOUT_SECONDS=180. Ollama không cần API key. Nội dung quá dài bị từ chối theo ngân sách byte bảo thủ (không phải đếm tokenizer chính xác); đầu ra thiếu/sai/trống hoặc hết token không được lưu. Cần đọc lại nội dung AI.
+Mở Ollama với model `qwen2.5:7b`. `.env`: AI_PROVIDER=ollama, OLLAMA_BASE_URL=http://127.0.0.1:11434, OLLAMA_MODEL=qwen2.5:7b, OLLAMA_TIMEOUT_SECONDS=180. Ollama không cần API key. Nội dung quá dài bị từ chối theo ngân sách byte bảo thủ (không phải đếm tokenizer chính xác); đầu ra thiếu/sai/trống hoặc hết token không được lưu. Nội dung AI cần được kiểm tra trước khi sử dụng.
 
 Chạy **run.bat** và **run-worker.bat** ở hai terminal. Worker không mở cổng HTTP. Khi chưa chạy worker, lượt ở trạng thái chờ; worker khởi động sẽ tiếp tục. Ctrl+C để dừng; `run-worker.bat --once` xử lý tối đa một lượt rồi thoát.
 
@@ -57,9 +59,9 @@ API: GET `/api/searches/sources`; POST `/api/searches` với cv_id, keywords/loc
 
 - **40/40 kiểm thử qua trên MySQL và SQLite**, gồm toàn bộ tài khoản/CV trước đó, Ollama, chọn nguồn, ưu tiên Việt Nam, snapshot/quyền truy cập, parser JSON-LD, robots/redirect/cache, chuẩn hóa địa điểm, tin hết hạn, lương, loại trùng và xử lý partial.
 - Gọi nguồn thật với Python/Backend: đọc được 6 tin CareerViet và 6 tin TopDev, không có cảnh báo trong lượt thử; lọc Hà Nội còn 3 tin CareerViet và 1 tin TopDev.
-- Trình duyệt kiểm tra mặc định chọn hai nguồn Việt Nam, nguồn quốc tế chưa chọn. Chạy hàng đợi/worker bằng tin thật và mở lại lịch sử sau reload; số lượng thực tế được ghi trong phần nghiệm thu bên dưới.
+- Trình duyệt kiểm tra mặc định chọn hai nguồn Việt Nam, nguồn quốc tế chưa chọn. Luồng xử lý nền và mở lại lịch sử đã được kiểm tra với dữ liệu tuyển dụng thực tế.
 - Nghiệm thu giao diện với từ khóa `Python, Backend`, không giới hạn địa điểm: worker hoàn thành với **11 tin** (6 CareerViet, 5 TopDev sau lọc), không báo lỗi nguồn. Reload và mở lại lượt vẫn đọc đủ kết quả.
-- Tài khoản kiểm thử là giả, dọn sau nghiệm thu; dừng server kiểm thử khi xong.
+- Dữ liệu ứng viên kiểm thử được mô phỏng và tách biệt với dữ liệu sử dụng thực tế.
 
 ![Chọn nguồn Việt Nam và lượt tìm hoàn thành](week-4-vietnam.png)
 
@@ -67,13 +69,8 @@ API: GET `/api/searches/sources`; POST `/api/searches` với cv_id, keywords/loc
 
 ## Còn lại
 
-TopCV/VietnamWorks chưa tích hợp. Chưa có hủy lượt hoặc UI quản trị nguồn; chưa kiểm tra tải nhiều worker/người dùng trên quy mô lớn. Cần mở rộng phân trang/phạm vi và đo độ bao phủ từ khóa trên tập hồ sơ mẫu. Chấm điểm, giải thích và xếp hạng thuộc tuần 5. DOCX cần nghiệm thu bố cục trực quan.
+TopCV/VietnamWorks chưa tích hợp. Chưa có hủy lượt hoặc UI quản trị nguồn; chưa kiểm tra tải nhiều worker/người dùng trên quy mô lớn. Cần mở rộng phân trang/phạm vi và đo độ bao phủ từ khóa trên tập hồ sơ mẫu. Chấm điểm, giải thích và xếp hạng thuộc tuần 5. DOCX là đầu ra bổ sung; PDF là định dạng CV chính.
 
-## Biên bản bàn giao
+## Tài liệu liên quan
 
-- Code, migration, cấu hình mẫu, bộ kiểm thử và ảnh nghiệm thu nằm trong tag `week-4`.
-- Kiểm thử chốt: 40/40 ca MySQL và 40/40 ca SQLite qua; JavaScript hợp lệ và `git diff --check` không báo lỗi.
-- Luồng thật đã nghiệm thu: chọn hai nguồn Việt Nam → queued → worker → completed với 11 tin → reload → mở lại lịch sử. Ollama local đã tạo/sửa CV thật với model `qwen2.5:7b`, ngữ cảnh 8192 token.
-- Database trên máy hiện tại đã áp dụng các migration tuần 4. Máy mới cần tạo `.env`, nhập database hoặc chạy migration theo README, cài model và mở web/worker. Repo không chứa database người dùng, mật khẩu hay API key.
-- Tài khoản giả đã dọn; worker kiểm thử đã thoát, server kiểm thử cổng 8015 đã tắt. Không dừng MySQL/Ollama đang được người dùng sử dụng.
-- Chuyển sang tuần 5 để triển khai đánh giá, giải thích, xếp hạng và lịch sử đánh giá. Các giới hạn ở mục trên được giữ công khai trong bản bàn giao.
+Mốc phiên bản giai đoạn này là `week-4`. Hướng dẫn cài đặt và migration nằm trong [README](../README.md). Chức năng đánh giá và xếp hạng được trình bày trong [tài liệu tuần 5](week-5.md).

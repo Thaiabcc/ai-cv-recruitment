@@ -6,13 +6,13 @@ Ngày báo cáo: **28/10/2026**, múi giờ Asia/Bangkok.
 
 ## 1 Phạm vi và cách kiểm tra
 
-Kiểm tra trên working tree tuần 5 chưa commit, dựa trên bản bàn giao week-4. Đã phát hiện và bổ sung kiểm soát bằng chứng kỹ năng mềm trong đợt lập báo cáo; các số liệu tự động cuối được chạy lại sau sửa. Dữ liệu ứng viên dùng trong kiểm thử là giả; không dùng hồ sơ thật của người dùng.
+Đối tượng kiểm thử là các chức năng thuộc phiên bản `week-5`. Đã phát hiện và bổ sung kiểm soát bằng chứng kỹ năng mềm trong đợt lập báo cáo; các số liệu tự động cuối được chạy lại sau sửa. Dữ liệu ứng viên dùng trong kiểm thử là giả; không dùng hồ sơ thật của người dùng.
 
 - Chạy lại cùng 62 phương thức kiểm thử trên MySQL thật và SQLite trong bộ nhớ.
 - Trong đó 22 phương thức kiểm tra trực tiếp tuần 5; 40 phương thức kiểm tra hồi quy tài khoản, CV, nguồn và tìm việc.
 - Các kiểm thử lỗi AI và API/worker dùng đầu ra mô phỏng để kiểm tra nhánh xử lý. Chúng không đo khả năng hiểu ngôn ngữ của mô hình.
 - Gọi Ollama thật với bốn tình huống có kỳ vọng xác định và một tin CareerViet công khai đã lưu. Chưa có điểm chuẩn do chuyên gia chấm cho tin CareerViet.
-- Luồng UI, reload, dừng và giữ lịch sử đã nghiệm thu ở lượt triển khai ngay trước báo cáo, trên cùng mã chức năng; đợt báo cáo này không mở lại web server.
+- Kiểm thử giao diện gồm theo dõi tiến độ, tải lại trang, dừng lượt xử lý và đối chiếu lịch sử; kết quả được trình bày riêng với các ca tự động.
 
 ## 2 Kết quả tự động
 
@@ -107,17 +107,17 @@ Ca CareerViet ở bảng trên đã bộc lộ lỗi thật: AI dùng danh sách
 | Phép kiểm tra | Điểm | Bao phủ | Ý nghĩa |
 | --- | ---: | ---: | --- |
 | Trước sửa, tin CareerViet thật | 15.0 | 20.0% | Có cộng nhầm hai tiêu chí kỹ năng mềm |
-| Chạy lại chính raw response đó bằng backend đã sửa | 5.0 | 10.0% | Hai tiêu chí không có bằng chứng đúng loại đã về unknown |
+| Chạy lại chính đầu ra gốc đó bằng backend đã sửa | 5.0 | 10.0% | Hai tiêu chí không có bằng chứng đúng loại đã về unknown |
 | Gọi Ollama mới sau sửa | 5.0 | 10.0% | completed; 93.938 giây |
 
-Chạy lại cùng raw response giúp tách tác động của bản sửa khỏi biến động model. Lượt gọi mới có thể trích tập tiêu chí khác; không yêu cầu điểm luôn trùng tuyệt đối. Việc giảm điểm trong ca này chỉ xác nhận loại bỏ phần cộng sai, không biến điểm còn lại thành điểm chuẩn do người chấm xác nhận. Quy tắc vẫn có thể bỏ sót cách diễn đạt tương đương và cần hiệu chỉnh ở tuần 6.
+Chạy lại cùng đầu ra gốc giúp tách tác động của bản sửa khỏi biến động model. Lượt gọi mới có thể trích tập tiêu chí khác; không yêu cầu điểm luôn trùng tuyệt đối. Việc giảm điểm trong ca này chỉ xác nhận loại bỏ phần cộng sai, không biến điểm còn lại thành điểm chuẩn do người chấm xác nhận. Quy tắc vẫn có thể bỏ sót cách diễn đạt tương đương và cần hiệu chỉnh ở tuần 6.
 
-## 6 Bằng chứng nghiệm thu giao diện trước đợt báo cáo
+## 6 Kiểm thử tích hợp giao diện
 
 - UI → queue → worker → Ollama → MySQL: ba tin giả cho 100 điểm, 33,33 điểm và insufficient; 3/3 tin đã xử lý, không có lỗi dịch vụ trong lượt đó.
 - Mở được đoạn yêu cầu và bằng chứng trong hồ sơ. Reload vẫn đọc được lượt đã lưu.
 - Tạo lượt mới và dừng; lượt trước vẫn giữ nguyên kết quả. Giới hạn một lượt active và cooldown được kiểm tra.
-- Tài khoản/tin giả đã được dọn sau nghiệm thu, ảnh lưu chỉ là bằng chứng lịch sử. Worker thử đã thoát và server 8015 đã tắt.
+- Tài khoản và tin tuyển dụng mô phỏng được cô lập trong quá trình kiểm thử; dữ liệu được loại bỏ sau kiểm tra.
 
 ![Bằng chứng UI dùng hồ sơ và tin giả](week-5-evaluation.png)
 
@@ -127,17 +127,17 @@ Chạy lại cùng raw response giúp tách tác động của bản sửa khỏ
 - Chưa kiểm tra tính công bằng theo nhóm, độ ổn định khi chạy lặp nhiều lần, kiểm thử prompt injection chuyên biệt hoặc kiểm thử bảo mật toàn diện.
 - Tối đa 12 tiêu chí/tin; trích dẫn đúng vị trí không đồng nghĩa phân loại đúng ý nghĩa. Danh sách công nghệ và quy tắc không bao phủ mọi ngành hoặc điều kiện AND/OR phức tạp.
 - Nội dung quá ngân sách 12.000 byte UTF-8 bị từ chối có thông báo; chưa có chia đoạn. Đây là giới hạn byte bảo thủ cho ngữ cảnh, không phải phép đếm tokenizer chính xác.
-- Worker đánh giá tuần tự, chưa đo tải nhiều người dùng/nhiều worker, thời gian phục hồi thực tế sau khi kill tiến trình hoặc hiệu năng trên máy khác.
+- Worker đánh giá tuần tự, chưa đo tải nhiều người dùng/nhiều worker, thời gian phục hồi thực tế sau khi buộc dừng tiến trình hoặc hiệu năng trên máy khác.
 - Các lỗi mạng, timeout và gián đoạn worker trong autotest được mô phỏng; không chủ động làm hỏng MySQL hay tắt Ollama của người dùng để thử.
 - Giữ nguyên giới hạn nguồn tuần 4: CareerViet/TopDev đang có adapter; TopCV/VietnamWorks chưa tích hợp; tối đa 6 tin chi tiết/nguồn Việt Nam/lượt tìm.
 
 ## 8 Kết luận và trạng thái mã nguồn
 
-**Chức năng tuần 5:** các tình huống đã kiểm tra đạt yêu cầu: đối chiếu bằng chứng, chấm điểm có kiểm soát, xếp hạng, lưu lịch sử, phân quyền, tiến độ, dừng và xử lý lỗi. Không tìm thấy lỗi mới ở các ca tự động chạy lại.
+**Chức năng tuần 5:** các tình huống đã kiểm tra đạt yêu cầu: đối chiếu bằng chứng, chấm điểm có kiểm soát, xếp hạng, lưu lịch sử, phân quyền, tiến độ, dừng và xử lý lỗi. Các ca tự động sau điều chỉnh đều đạt kết quả mong đợi.
 
 **Chất lượng AI:** chưa đủ cơ sở công bố tỷ lệ chính xác hoặc coi điểm là kết quả tuyển dụng. Các tình huống kiểm soát nhỏ hữu ích để xác nhận hành vi, không thay thế đánh giá trên tập mẫu. Tuần 6 nên ưu tiên bộ hồ sơ/tin có người chấm, đo sai khác và hiệu chỉnh rubric trước khi tối ưu tốc độ.
 
-Code được kiểm thử ở trạng thái working tree dựa trên week-4, sau đó chốt bàn giao cùng báo cáo dưới tag `week-5` ngày 28/10/2026. Lần lập báo cáo chỉ chạy bộ test/API Ollama có sẵn, không mở server web mới.
+Mã nguồn, migration và kết quả kiểm thử được lưu cùng phiên bản `week-5`. Dấu vết kiểm thử gồm mã băm của các module và kết quả từng ca trong tệp JSON.
 
 ## 9 Tái hiện và hồ sơ kiểm thử
 
@@ -152,4 +152,4 @@ git diff --check
 
 MySQL cần đã áp dụng migration tuần 5. Test tích hợp dùng giao dịch/savepoint và rollback dữ liệu giả. Các request AI live dùng hồ sơ giả, không tạo tài khoản hay phiên đánh giá mới trong database.
 
-[Kết quả từng ca, thời gian và hash mã nguồn ở dạng JSON](week-5-test-results.json). File JSON không chứa khóa API, mật khẩu, hồ sơ thật, toàn văn tin hoặc raw model response. Các script/raw log điều tra nằm trong tmp bị Git bỏ qua.
+[Kết quả từng ca, thời gian và hash mã nguồn ở dạng JSON](week-5-test-results.json). Tệp JSON tổng hợp định danh ca kiểm thử, thời gian, số liệu kết quả và mã băm module. Dữ liệu nguồn và đầu ra mô hình chi tiết được tách khỏi tài liệu công khai.

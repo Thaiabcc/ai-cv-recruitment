@@ -1,6 +1,6 @@
 # Tuần 5 — Đánh giá bằng chứng và xếp hạng công việc
 
-**Đã chốt bàn giao phạm vi chức năng ngày 28/10/2026, tag `week-5`.** Các giới hạn chất lượng AI ở cuối tài liệu tiếp tục được kiểm chứng trong tuần 6.
+Phiên bản chức năng: `week-5`. Các giới hạn chất lượng AI được trình bày ở cuối tài liệu và tiếp tục được đánh giá trong giai đoạn kiểm thử, tối ưu.
 
 ## Phạm vi đã triển khai
 
@@ -64,7 +64,7 @@ Mỗi lần đánh giá lại tạo batch mới với model, rubric_version và 
 
 ## Chạy và API
 
-1. Áp dụng `database/week-5.sql` một lần sau các migration tuần 4. Máy hiện tại đã áp dụng.
+1. Áp dụng `database/week-5.sql` một lần sau các migration tuần 4.
 2. Mở Ollama với model đã cấu hình; chạy lại `run.bat` và `run-worker.bat` để nạp code mới.
 3. Mở lịch sử tìm việc, chọn lượt completed/partial có tin, bấm **Đánh giá & xếp hạng bằng Ollama**.
 4. Xem tiến độ và trích dẫn; có thể dừng, mở lượt cũ hoặc tạo lượt mới.
@@ -85,7 +85,7 @@ Kết nối MySQL của ứng dụng đã đặt session time_zone UTC, đồng 
 - Bộ kiểm thử bao phủ quyền/CSRF, trọng số, unknown, trích dẫn giả, điều kiện nhạy cảm, suy diễn bằng cấp/kinh nghiệm/kỹ năng nhóm, đồng điểm, lịch sử/phân trang, dừng khi đang xử lý, lỗi Ollama và phục hồi worker. **62/62 ca qua trên MySQL và 62/62 ca qua trên SQLite** ở lần kiểm tra cuối; JavaScript hợp lệ và kiểm tra whitespace không có lỗi.
 - Ollama thật đã đối chiếu hồ sơ giả với các tin kiểm thử và một tin CareerViet công khai. Các đầu ra sai phát hiện trong lượt thử đã dẫn tới bổ sung các kiểm tra bảo thủ phía backend, không phải bằng chứng mô hình luôn đúng.
 - Luồng giao diện → worker → Ollama → MySQL với ba tin giả: 100/100, 33,33/100 và không tạo điểm cho tin chỉ có quyền lợi. Mở được trích dẫn yêu cầu/bằng chứng; reload vẫn giữ kết quả. Tạo lượt mới, dừng và mở lại lượt cũ thành công sau sửa UTC.
-- Ảnh bên dưới dùng dữ liệu giả để kiểm thử, không phải tin tuyển dụng thật hoặc hồ sơ người dùng.
+- Ảnh minh họa sử dụng hồ sơ và tin tuyển dụng mô phỏng.
 
 ![Giải thích điểm và trích dẫn bằng chứng](week-5-evaluation.png)
 
@@ -97,6 +97,6 @@ Rubric và mức matched/partial do AI hỗ trợ vẫn cần hiệu chỉnh b�
 
 Đã chạy lại 62 ca trên MySQL và SQLite; phát hiện, sửa và kiểm tra hồi quy lỗi cộng điểm kỹ năng mềm từ danh sách công nghệ. Xem [báo cáo chi tiết](week-5-test-report.md) và [kết quả từng ca](week-5-test-results.json).
 
-## Bàn giao
+## Thành phần triển khai
 
-Bản bàn giao gồm API, worker, giao diện, migration `week-5.sql`, bộ kiểm thử, ảnh nghiệm thu và báo cáo có kết quả trước/sau sửa lỗi. Database máy hiện tại đã nâng cấp; máy khác cập nhật từ week-4 cần áp dụng migration tuần 5 và khởi động lại web/worker. `.env`, database và hồ sơ thật không nằm trong Git. Không để lại server kiểm thử chạy nền.
+Giai đoạn này gồm API, worker, giao diện, migration `week-5.sql`, bộ kiểm thử và báo cáo kết quả. Khi cập nhật từ phiên bản week-4, cần áp dụng migration tuần 5 và khởi động lại web/worker. Cấu hình `.env` và dữ liệu MySQL được quản lý riêng theo môi trường.
