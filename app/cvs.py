@@ -9,7 +9,7 @@ from app.config import settings
 from app.cv_schemas import AIRequest, CVDocument, DraftRequest, SaveVersion
 from app.cv_design import MAX_PHOTO_BYTES, TEMPLATES, own_photo, resolve_design, store_photo
 from app.database import get_db
-from app.gemini import generate_career
+from app.ai import generate_career, availability, provider_model
 from app.models import CV, Profile, User
 
 router = APIRouter(prefix='/api/cvs', tags=['CVs'])
@@ -50,7 +50,7 @@ def detail(cv):
 def persist(db, user_id, snapshot, document, origin, parent_id=None, design=None):
     cv = CV(user_id=user_id, profile_snapshot=snapshot,
             content={'schema_version': 1, 'document': document.model_dump(), 'origin': origin,
-                     'parent_id': parent_id, 'model': settings.gemini_model if origin == 'gemini' else None,
+                     'parent_id': parent_id, 'model': provider_model() if origin in ('gemini', 'ollama') else None,
                      'design': design or {'template_id': 'forest', 'photo_id': None}})
     db.add(cv)
     db.commit()
@@ -60,7 +60,7 @@ def persist(db, user_id, snapshot, document, origin, parent_id=None, design=None
 
 @router.get('/status')
 def status(user: User = Depends(current_user)):
-    return {'ai_available': bool(settings.gemini_api_key.get_secret_value()), 'model': settings.gemini_model}
+    return availability()
 
 
 @router.get('/templates')
@@ -104,7 +104,7 @@ def draft(data: DraftRequest = Body(default=DraftRequest()), user: User = Depend
 
 def require_consent(data):
     if not data.consent:
-        raise HTTPException(422, 'Cần đồng ý gửi nội dung nghề nghiệp và yêu cầu chỉnh sửa tới Google Gemini.')
+        raise HTTPException(422, 'Cần đồng ý xử lý nội dung nghề nghiệp bằng AI đã cấu hình.')
 
 
 @router.post('/generate', status_code=201, dependencies=[Depends(mutation_guard)])
@@ -114,7 +114,7 @@ def generate(data: AIRequest, user: User = Depends(current_user), db: Session = 
     design = resolve_design(data.design, user.id, db)
     content = generate_career(snapshot, data.instructions)
     document = document_from_profile(snapshot).model_copy(update=content.model_dump())
-    return persist(db, user.id, snapshot, document, 'gemini', design=design)
+    return persist(db, user.id, snapshot, document, settings.ai_provider, design=design)
 
 
 @router.post('/preview', dependencies=[Depends(mutation_guard)])
@@ -158,7 +158,7 @@ def revise(cv_id: int, data: AIRequest, user: User = Depends(current_user), db: 
     design = resolve_design(data.design, user.id, db, parent.content.get('design'))
     content = generate_career(parent.profile_snapshot, data.instructions, parent.content['document'])
     document = CVDocument.model_validate(parent.content['document']).model_copy(update=content.model_dump())
-    return persist(db, user.id, parent.profile_snapshot, document, 'gemini', parent.id, design)
+    return persist(db, user.id, parent.profile_snapshot, document, settings.ai_provider, parent.id, design)
 
 
 @router.get('/{cv_id}/export/{file_format}')

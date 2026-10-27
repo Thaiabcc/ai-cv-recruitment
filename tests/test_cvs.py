@@ -19,7 +19,11 @@ from zipfile import ZipFile
 
 
 class CVTests(unittest.TestCase):
-    setUp = test_accounts.AccountTests.setUp
+    def setUp(self):
+        provider = patch.object(settings, 'ai_provider', 'gemini')
+        provider.start()
+        self.addCleanup(provider.stop)
+        test_accounts.AccountTests.setUp(self)
     tearDown = test_accounts.AccountTests.tearDown
     register = test_accounts.AccountTests.register
 

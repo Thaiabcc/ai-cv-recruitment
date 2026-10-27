@@ -3,13 +3,15 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 from app.accounts import router, current_user
 from app.cvs import router as cv_router
+from app.searches import router as search_router
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from app.config import ROOT_DIR, settings
 
-app = FastAPI(title=settings.app_name, version="0.3.0-week3")
+app = FastAPI(title=settings.app_name, version="0.4.0-week4")
 app.include_router(router)
 app.include_router(cv_router)
+app.include_router(search_router)
 
 
 @app.middleware('http')
@@ -32,8 +34,8 @@ def home():
 
 @app.get("/api/health", tags=["System"])
 def health():
-    """Application health only; does not check MySQL or Gemini."""
-    return {"status": "ok", "app": settings.app_name, "version": "0.3.0-week3"}
+    """Application health only; does not check MySQL or AI providers."""
+    return {"status": "ok", "app": settings.app_name, "version": "0.4.0-week4"}
 
 @app.get("/api/demo/recommendations", tags=["Demo"], dependencies=[Depends(current_user)])
 def demo_recommendations():

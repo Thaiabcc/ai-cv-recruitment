@@ -2,7 +2,7 @@
 
 Hệ thống AI hỗ trợ tạo hồ sơ ứng viên, tìm kiếm và đánh giá mức độ phù hợp với vị trí tuyển dụng. Đồ án triển khai theo kế hoạch 8 tuần.
 
-**Giai đoạn hiện tại: Tuần 3 — CV, Gemini và xuất PDF/DOCX; đang kiểm thử và nghiệm thu.**
+**Tuần 4 đã chốt bàn giao ngày 27/10/2026 — tag `week-4`. Bước tiếp theo: tuần 5, đánh giá và xếp hạng công việc.**
 
 ## Đã triển khai
 
@@ -11,7 +11,9 @@ Hệ thống AI hỗ trợ tạo hồ sơ ứng viên, tìm kiếm và đánh gi
 - Hồ sơ gồm họ tên, điện thoại, địa chỉ, học vấn, kỹ năng, kinh nghiệm, dự án và nguyện vọng nghề nghiệp.
 - Mỗi tài khoản chỉ truy cập hồ sơ của chính mình; tải lại trang hoặc đăng nhập lại vẫn đọc được dữ liệu đã lưu.
 
-Đã bổ sung tạo bản nháp CV, tích hợp Gemini biên soạn/chỉnh sửa, lưu phiên bản và xuất PDF/DOCX. Đã cấu hình khóa và thử gọi Gemini, hiện Google trả lỗi 503 quá tải; DOCX còn chờ kiểm tra trực quan bằng Word/LibreOffice. Thu thập tin thật, chấm điểm phù hợp và lịch sử tìm việc **chưa triển khai**. Màn hình công việc hiện dùng dữ liệu mẫu cố định, yêu cầu đăng nhập.
+Đã có tạo/sửa CV bằng **Ollama local (`qwen2.5:7b`, ngữ cảnh 8192 token)**, lưu phiên bản, bốn mẫu PDF và xuất DOCX. Gemini giữ như lựa chọn chủ động qua cấu hình, không tự fallback lên cloud. DOCX còn chờ nghiệm thu trực quan bằng Word/LibreOffice.
+
+Tuần 4 đã có **CareerViet và TopDev cho việc làm Việt Nam**, thêm Arbeitnow cho Đức/quốc tế; chuẩn hóa/loại trùng, lọc từ khóa và địa điểm, hàng đợi MySQL, worker và kết quả/lịch sử riêng từng tài khoản. Mặc định chọn hai nguồn Việt Nam; mỗi nguồn Việt Nam đọc tối đa 2 từ khóa, 6 tin chi tiết mỗi lượt. **Chưa lọc lương và chưa chấm điểm phù hợp**. Phần minh họa cũ vẫn được gắn nhãn dữ liệu mẫu.
 
 ## Cài đặt và chạy trên Windows
 
@@ -30,8 +32,10 @@ Với database mới, mở MySQL Workbench và chạy lần lượt:
 1. `database/schema.sql` — tạo database và 7 bảng nghiệp vụ, chỉ chạy trên database phát triển mới.
 2. `database/week-2.sql` — thêm bảng phiên đăng nhập; có thể chạy lại, giữ dữ liệu hiện có.
 3. `database/week-3-photos.sql` — thêm bảng lưu ảnh chân dung trong MySQL.
+4. `database/week-4.sql` — bổ sung hàng đợi, liên kết tin theo lượt và bật nguồn Arbeitnow; chạy một lần.
+5. `database/week-4-vietnam.sql` — thêm CareerViet/TopDev; có thể chạy lại, giữ trạng thái bật/tắt nguồn đã có.
 
-Nếu đã có database tuần 1, chạy các migration tuần 2 và ảnh tuần 3; bỏ qua migration đã áp dụng. Ứng dụng không tự chạy migration.
+Nếu đã có database tuần 1, chạy các migration tuần 2, ảnh tuần 3 và tuần 4; bỏ qua migration đã áp dụng. Ứng dụng không tự chạy migration.
 
 ```powershell
 .\run.bat
@@ -79,8 +83,8 @@ Bộ kiểm thử MySQL dùng kết nối trong một giao dịch ngoài, các y
 | --- | --- | --- |
 | 1 | Phân tích, thiết kế, nguyên mẫu | Hoàn thành, tag `week-1` |
 | 2 | Tài khoản, phân quyền, lưu hồ sơ MySQL | Hoàn thành, đã nghiệm thu giao diện; tag `week-2` |
-| 3 | Gemini tạo/chỉnh sửa CV, lưu phiên bản, xuất PDF/DOCX | Đã triển khai; chờ kiểm thử Gemini thật và kiểm tra trực quan DOCX |
-| 4 | Khảo sát nguồn tuyển dụng, tìm/thu thập/chuẩn hóa dữ liệu, tác vụ nền | Chưa thực hiện |
+| 3 | AI tạo/chỉnh sửa CV, lưu phiên bản, xuất PDF/DOCX | Đã chạy thật bằng Ollama local; DOCX còn nghiệm thu trực quan |
+| 4 | Khảo sát nguồn tuyển dụng, tìm/thu thập/chuẩn hóa dữ liệu, tác vụ nền | Hoàn thành phạm vi bàn giao: CareerViet/TopDev, Arbeitnow tùy chọn, worker, chọn nguồn và lịch sử; tag `week-4` |
 | 5 | Đánh giá, giải thích, xếp hạng và lịch sử; hoàn thiện chức năng | Chưa thực hiện |
 | 6 | Kiểm thử tích hợp, đánh giá chất lượng và tối ưu | Chưa thực hiện |
 | 7 | Báo cáo và poster | Chưa thực hiện |
@@ -97,3 +101,22 @@ Bộ kiểm thử MySQL dùng kết nối trong một giao dịch ngoài, các y
 - [Repository](https://github.com/Thaiabcc/ai-cv-recruitment), [mốc tuần 1](https://github.com/Thaiabcc/ai-cv-recruitment/tree/week-1), [mốc tuần 2](https://github.com/Thaiabcc/ai-cv-recruitment/tree/week-2).
 
 Trước khi triển khai Internet cần bổ sung giới hạn thử đăng nhập ở ứng dụng/proxy, xác minh email và khôi phục mật khẩu; sử dụng tài khoản database có quyền giới hạn và HTTPS. Phiên bản hiện tại phục vụ phát triển và nghiệm thu đồ án trên localhost.
+
+## Ollama local và worker tìm việc
+
+Cài/mở Ollama, tải model nếu chưa có: `ollama pull qwen2.5:7b`. Trong `.env`:
+
+```dotenv
+AI_PROVIDER=ollama
+OLLAMA_BASE_URL=http://127.0.0.1:11434
+OLLAMA_MODEL=qwen2.5:7b
+OLLAMA_TIMEOUT_SECONDS=180
+```
+
+Ứng dụng dùng `/api/chat`, JSON schema, `num_ctx=8192`, `num_predict=3072`. Nội dung quá dài được từ chối có thông báo, không tự cắt dữ kiện. Ollama cần đang chạy trên chính máy chạy backend; không cần API key. Đổi `.env` cần khởi động lại ứng dụng.
+
+Chạy `run.bat` cho web và **mở thêm `run-worker.bat`** cho tác vụ tìm việc. Worker không mở cổng HTTP. Dừng cả hai bằng Ctrl+C khi xong. Nếu chưa chạy worker, lượt tìm việc giữ trạng thái chờ; khởi động worker sẽ tiếp tục xử lý. Muốn xử lý một lượt rồi thoát: `run-worker.bat --once`.
+
+Đăng nhập → lưu hồ sơ → tạo CV → ở phần **Tìm việc từ CV của bạn**, chọn CV, tùy chọn từ khóa/địa điểm rồi tìm. Mặc định chọn CareerViet và TopDev; có thể bật thêm Arbeitnow. Để trống địa điểm để tìm toàn nguồn; hỗ trợ Hà Nội/Hanoi, TP.HCM/Hồ Chí Minh, Đà Nẵng/Da Nang. Nhập `remote` chỉ lọc cờ remote được nguồn xác nhận, không bảo đảm được làm từ Việt Nam. TopCV đang trả 403 khi lấy tin trực tiếp; VietnamWorks chưa có adapter đọc đủ nội dung. Hai nguồn này chưa được bật. **Làm mới lịch sử** cũng cập nhật danh sách 30 CV mới nhất để chọn.
+
+Chi tiết nguồn, giới hạn và kiểm thử: [tuần 4](docs/week-4.md). Database và `.env` vẫn phải chuyển riêng khi đổi máy.

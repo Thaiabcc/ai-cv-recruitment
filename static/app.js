@@ -56,6 +56,7 @@ async function api(path, options = {}) {
 function showGuest() {
   profileDirty = false;
   resetCVWorkspace();
+  resetSearches();
   $('auth-section').hidden = false;
   $('account-section').hidden = true;
   $('profile-section').hidden = true;
@@ -86,6 +87,7 @@ async function showAccount(user) {
   $('save-status').textContent = profile ? 'Đã tải hồ sơ đã lưu.' : 'Bạn chưa có hồ sơ. Hãy nhập và lưu thông tin.';
   $('message').textContent = '';
   await loadCVWorkspace();
+  await loadSearches();
 }
 $('auth-switch').addEventListener('click', () => {
   registering = !registering;
@@ -158,7 +160,7 @@ let cvDesign = { template_id: 'monochrome', photo_id: null };
 let cvLastPhotoId = null;
 let cvWorking = false;
 let cvEpoch = 0;
-const cvOrigins = { profile: 'Bản nháp từ hồ sơ', manual: 'Chỉnh sửa thủ công', gemini: 'Gemini biên soạn' };
+const cvOrigins = { profile: 'Bản nháp từ hồ sơ', manual: 'Chỉnh sửa thủ công', gemini: 'Gemini biên soạn', ollama: 'Ollama local biên soạn' };
 function resetCVWorkspace() {
   clearPDFPreview();
   cvEpoch++;
@@ -305,7 +307,7 @@ async function loadCVWorkspace() {
   try {
     const status = await api('/cvs/status');
     if (epoch !== cvEpoch) return;
-    $('cv-ai-status').textContent = status.ai_available ? 'Gemini đã được cấu hình. Bạn có thể nhờ AI biên soạn CV.' : 'Chưa cấu hình Gemini. Bạn vẫn có thể tạo bản nháp, chỉnh sửa và tải PDF/DOCX.';
+    $('cv-ai-status').textContent = status.ai_available ? `${status.provider === 'ollama' ? 'Ollama local' : 'Gemini'} · ${status.model}. Bạn có thể nhờ AI biên soạn CV.` : (status.message || 'AI chưa sẵn sàng. Bạn vẫn có thể tạo bản nháp và xuất CV.');
     const items = await refreshCVList(false, epoch);
     if (epoch !== cvEpoch) return;
     if (items?.length) {
@@ -335,7 +337,7 @@ async function createCV(path, body) {
   await runCV(async (epoch) => {
     if (cvTextDirty) { $('cv-status').textContent = 'Hãy lưu hoặc bỏ thay đổi nội dung CV trước khi tạo CV mới.'; return; }
     if (profileDirty) { $('cv-status').textContent = 'Hồ sơ có thay đổi chưa lưu. Hãy lưu hồ sơ phía trên trước khi tạo CV.'; return; }
-    $('cv-status').textContent = path === '/draft' ? 'Đang tạo bản nháp…' : 'Gemini đang biên soạn, vui lòng chờ…';
+    $('cv-status').textContent = path === '/draft' ? 'Đang tạo bản nháp…' : 'AI đang biên soạn, vui lòng chờ…';
     const version = await api(`/cvs${path}`, { method: 'POST', body: JSON.stringify({ ...body, design: cvDesign }) });
     if (epoch !== cvEpoch) return;
     showCV(version);
@@ -376,7 +378,7 @@ $('cv-revise').addEventListener('click', () => runCV(async (epoch) => {
   if (!cvSelected || !checkCVSaved()) return;
   const instructions = $('cv-instructions').value.trim();
   if (!instructions) { $('cv-status').textContent = 'Hãy nhập yêu cầu biên soạn ở đầu phần CV.'; return; }
-  $('cv-status').textContent = 'Gemini đang chỉnh sửa bản đã lưu…';
+  $('cv-status').textContent = 'AI đang chỉnh sửa bản đã lưu…';
   const version = await api(`/cvs/${cvSelected.id}/revise`, { method: 'POST', body: JSON.stringify({ instructions, consent: $('cv-consent').checked }) });
   if (epoch !== cvEpoch) return;
   showCV(version); await refreshCVList(false, epoch);
@@ -477,3 +479,91 @@ $('cv-photo-file').addEventListener('change', () => {
   try { await api('/health'); $('status').textContent = 'Hệ thống đang hoạt động'; }
   catch { $('status').textContent = 'Không thể kết nối máy chủ.'; }
 })();
+
+let searchTimer = null;
+let searchEpoch = 0;
+let searchCursor = null;
+function resetSearches() {
+  searchEpoch++; clearTimeout(searchTimer);
+  $('search-section').hidden = true;
+  $('search-history').replaceChildren(); $('search-jobs').replaceChildren();
+  $('search-status').textContent = ''; $('search-cv').replaceChildren();
+}
+async function loadSearches() {
+  const epoch = searchEpoch;
+  const [versions, sources] = await Promise.all([api('/cvs'), api('/searches/sources')]);
+  if (epoch !== searchEpoch) return;
+  $('search-cv').replaceChildren();
+  for (const cv of versions.items) {
+    const option = document.createElement('option'); option.value = cv.id;
+    option.textContent = `#${cv.id} · ${cv.title || 'CV'} · ${cvDate(cv.created_at)}`;
+    $('search-cv').append(option);
+  }
+  $('search-sources').textContent = sources.filter(s => !s.enabled).map(s => `${s.name}: ${s.scope}`).join(' · ');
+  $('search-source-options').replaceChildren();
+  const legend = document.createElement('legend'); legend.textContent = 'Nguồn tìm việc'; $('search-source-options').append(legend);
+  for (const source of sources.filter(s => s.enabled)) {
+    const label = document.createElement('label'); const input = document.createElement('input');
+    input.type = 'checkbox'; input.value = source.id; input.name = 'search-source'; input.checked = source.country === 'VN';
+    const text = document.createElement('span'); text.textContent = `${source.name} · ${source.scope}`;
+    label.append(input, text); $('search-source-options').append(label);
+  }
+  $('search-section').hidden = false;
+  $('search-start').disabled = !versions.items.length;
+  if (!versions.items.length) $('search-status').textContent = 'Hãy tạo và lưu CV trước khi tìm việc.';
+  await searchHistory();
+}
+async function searchHistory(append = false) {
+  const epoch = searchEpoch;
+  const result = await api('/searches' + (append && searchCursor ? `?before_id=${searchCursor}` : ''));
+  if (epoch !== searchEpoch) return;
+  if (!append) $('search-history').replaceChildren();
+  searchCursor = result.next_before_id; $('search-more').hidden = !searchCursor;
+  for (const run of result.items) {
+    const button = document.createElement('button'); button.type = 'button'; button.className = 'text-button';
+    button.dataset.runId = run.id;
+    button.textContent = `Lượt #${run.id} · ${run.status} · ${cvDate(run.created_at)}`;
+    button.addEventListener('click', () => watchSearch(run.id)); $('search-history').append(button);
+  }
+  const active = result.items.find(r => ['queued', 'running'].includes(r.status));
+  if (!append && active) await watchSearch(active.id);
+}
+async function watchSearch(id) {
+  clearTimeout(searchTimer);
+  const epoch = ++searchEpoch;
+  try {
+    const run = await api(`/searches/${id}`);
+    if (epoch !== searchEpoch) return;
+    const labels = {queued: 'Đang chờ worker xử lý', running: 'Đang thu thập và lọc tin', completed: 'Hoàn thành', partial: 'Hoàn thành một phần', failed: 'Tìm việc thất bại'};
+    const historyButton = document.querySelector(`#search-history button[data-run-id="${run.id}"]`);
+    if (historyButton) historyButton.textContent = `Lượt #${run.id} · ${labels[run.status]} · ${cvDate(run.created_at)}`;
+    $('search-status').textContent = `${labels[run.status]} · ${run.jobs.length} tin. ${Object.values(run.source_errors).join(' ')} ${run.query.scope}`;
+    $('search-jobs').replaceChildren();
+    for (const job of run.jobs) {
+      const card = document.createElement('article');
+      for (const [tag, text] of [['h3', job.title], ['p', job.company], ['p', `${job.location}${job.remote ? ' · Có remote' : ''}`], ['p', job.salary_text || job.salary_note || 'Nguồn chưa cung cấp mức lương'], ['p', job.description]]) {
+        const el = document.createElement(tag); el.textContent = text;
+        if (tag === 'p' && text === job.description) { const details = document.createElement('details'); const summary = document.createElement('summary'); summary.textContent = 'Đọc mô tả công việc'; details.append(summary, el); card.append(details); }
+        else card.append(el);
+      }
+      const link = document.createElement('a'); link.href = job.url; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.textContent = `Xem tin gốc · ${job.source || 'Nguồn tuyển dụng'}`; card.append(link);
+      $('search-jobs').append(card);
+    }
+    if (run.status === 'completed' && !run.jobs.length) $('search-status').textContent += ' Không có tin khớp trong phạm vi nguồn. Thử từ khóa ngắn hơn hoặc bỏ địa điểm.';
+    if (['queued', 'running'].includes(run.status)) searchTimer = setTimeout(() => watchSearch(id), 3000);
+  } catch (error) { if (epoch === searchEpoch) $('search-status').textContent = error.message; }
+}
+$('search-start').addEventListener('click', async () => {
+  if (profileDirty) { $('search-status').textContent = 'Hãy lưu hồ sơ trước khi tìm việc.'; return; }
+  if (!document.querySelector('input[name="search-source"]:checked')) { $('search-status').textContent = 'Hãy chọn ít nhất một nguồn tuyển dụng.'; return; }
+  $('search-start').disabled = true;
+  const epoch = searchEpoch;
+  try {
+    const run = await api('/searches', {method: 'POST', body: JSON.stringify({cv_id: Number($('search-cv').value), keywords: $('search-keywords').value, location: $('search-location').value, source_ids: [...document.querySelectorAll('input[name="search-source"]:checked')].map(input => Number(input.value))})});
+    if (epoch !== searchEpoch) return;
+    await searchHistory(); await watchSearch(run.id);
+  } catch (error) { $('search-status').textContent = error.message; }
+  finally { $('search-start').disabled = !$('search-cv').options.length; }
+});
+$('search-refresh').addEventListener('click', () => loadSearches().catch(error => { $('search-status').textContent = error.message; }));
+$('search-more').addEventListener('click', () => searchHistory(true).catch(error => { $('search-status').textContent = error.message; }));

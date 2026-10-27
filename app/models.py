@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import BigInteger, DateTime, ForeignKey, Integer, JSON, LargeBinary, String, UniqueConstraint, func
+from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, Integer, JSON, LargeBinary, String, Text, UniqueConstraint, func
 from sqlalchemy.dialects.mysql import BIGINT, MEDIUMBLOB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -59,3 +59,47 @@ class CVPhoto(Base):
     data: Mapped[bytes] = mapped_column(LargeBinary().with_variant(MEDIUMBLOB, 'mysql'), deferred=True)
     sha256: Mapped[str] = mapped_column(String(64))
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+class RecruitmentSource(Base):
+    __tablename__ = 'recruitment_sources'
+    id: Mapped[int] = mapped_column(ID, primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(100))
+    domain: Mapped[str] = mapped_column(String(253), unique=True)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
+class Job(Base):
+    __tablename__ = 'jobs'
+    id: Mapped[int] = mapped_column(ID, primary_key=True, autoincrement=True)
+    source_id: Mapped[int] = mapped_column(ID, ForeignKey('recruitment_sources.id'))
+    url: Mapped[str] = mapped_column(Text)
+    url_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    title: Mapped[str] = mapped_column(String(255))
+    company: Mapped[str | None] = mapped_column(String(255))
+    location: Mapped[str | None] = mapped_column(String(255))
+    salary_text: Mapped[str | None] = mapped_column(String(255))
+    description: Mapped[str] = mapped_column(Text)
+    requirements: Mapped[dict | None] = mapped_column(JSON)
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime)
+    fetched_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+class SearchRun(Base):
+    __tablename__ = 'search_runs'
+    id: Mapped[int] = mapped_column(ID, primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(ID, ForeignKey('users.id'))
+    cv_id: Mapped[int] = mapped_column(ID, ForeignKey('cvs.id'))
+    status: Mapped[str] = mapped_column(String(20), default='queued')
+    query_snapshot: Mapped[dict] = mapped_column(JSON)
+    source_errors: Mapped[dict | None] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    started_at: Mapped[datetime | None] = mapped_column(DateTime)
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+class SearchRunJob(Base):
+    __tablename__ = 'search_run_jobs'
+    search_run_id: Mapped[int] = mapped_column(ID, ForeignKey('search_runs.id'), primary_key=True)
+    job_id: Mapped[int] = mapped_column(ID, ForeignKey('jobs.id'), primary_key=True)
+    snapshot: Mapped[dict] = mapped_column(JSON)

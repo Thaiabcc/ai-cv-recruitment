@@ -194,3 +194,12 @@ footer { border-color: #ccd4bf; }
 .pdf-preview { padding: 12px; }
 .pdf-preview-link { margin: -12px -12px 12px; }
 .preview-more { display: block; margin: 16px auto; }
+#search-section .form-card{display:grid;gap:18px;margin-bottom:24px}
+#search-section label{display:grid;gap:8px;font-weight:600}
+#search-section select{width:100%;padding:12px;border:1px solid #c6d0c1;border-radius:10px;background:#fffef7;color:#243d32;font:inherit}
+#search-history{display:flex;flex-wrap:wrap;gap:12px}
+#search-jobs article{min-width:0;overflow-wrap:anywhere}
+#search-jobs details p{white-space:pre-line;line-height:1.6;max-height:420px;overflow:auto}
+#search-source-options{display:grid;gap:12px;padding:16px;border:1px solid #c6d0c1;border-radius:10px}
+#search-source-options label{display:flex;align-items:flex-start;gap:10px;font-weight:400}
+#search-source-options input{width:18px;height:18px;flex:0 0 18px;margin-top:3px;accent-color:#17624e}
